@@ -14,13 +14,16 @@ class testPerceptronDB(TestCase):
         layersNumber = randint(2,12)
         dimensions = [randint(2,100) for _ in range(layersNumber)]
         comments = "".join([choice(ascii_letters) for _ in range(15)])
-        perceptron = Perceptron(dimensions,comments)
+        initialPerceptron = Perceptron(dimensions,comments)
         # precheck
-        self.assertFalse(hasattr(perceptron,"id"),"ERROR : perceptron has id")
+        self.assertFalse(hasattr(initialPerceptron,"id"),"ERROR : perceptron has id")
         # call DB create
-        PerceptronDB.create(perceptron)
+        PerceptronDB.create(initialPerceptron)
         # check DB create
-        self.assertTrue(hasattr(perceptron,"id"),"ERROR : perceptron has no id")
+        self.assertTrue(hasattr(initialPerceptron,"id"),"ERROR : perceptron has no id")
+        # call DB get by id
+        fetchedPerceptron = PerceptronDB.getById(initialPerceptron.id)
+        self.assertEqual(initialPerceptron,fetchedPerceptron,"ERROR : perceptron are different")
         pass
     pass
 pass

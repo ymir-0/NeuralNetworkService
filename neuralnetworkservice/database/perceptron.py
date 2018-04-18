@@ -1,9 +1,10 @@
 # coding=utf-8
 __version__ = '0.0.0'
 # import
-import psycopg2
+from psycopg2 import connect
+from neuralnetworkcommon.perceptron import Perceptron
 # constants
-connection = psycopg2.connect(host="yggdrasil", port="5433", dbname="neuronnetwork", user="neuronnetwork", password="")
+connection = connect(host="yggdrasil", port="5433", dbname="neuronnetwork", user="neuronnetwork", password="neuronnetwork")
 # perceptron
 class PerceptronDB():
     @staticmethod
@@ -17,5 +18,15 @@ class PerceptronDB():
         cursor.close()
         perceptron.id = id
         pass
+    @staticmethod
+    def getById(id):
+        statement = "SELECT ID, COMMENTS FROM neuronnetwork.PERCEPTRON WHERE ID=%s"
+        cur = connection.cursor()
+        cur.execute(statement, (id,))
+        attributs = cur.fetchone()
+        cur.close()
+        perceptron = Perceptron.constructFromAttributes(id=attributs[0],comments=attributs[1])
+        return perceptron
     pass
 pass
+# TODO : insert/select layer and use in perceptron
