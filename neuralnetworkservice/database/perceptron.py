@@ -12,9 +12,10 @@ class PerceptronDB():
         parameters = (perceptron.comments,)
         cursor = connection.cursor()
         cursor.execute(statement, parameters)
-        id = cursor.fetchone()
+        id = cursor.fetchone()[0]
         connection.commit()
         cursor.close()
-        return id
+        perceptron.id = id
+        pass
     pass
 pass

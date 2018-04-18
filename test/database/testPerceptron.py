@@ -15,8 +15,12 @@ class testPerceptronDB(TestCase):
         dimensions = [randint(2,100) for _ in range(layersNumber)]
         comments = "".join([choice(ascii_letters) for _ in range(15)])
         perceptron = Perceptron(dimensions,comments)
+        # precheck
+        self.assertFalse(hasattr(perceptron,"id"),"ERROR : perceptron has id")
         # call DB create
         PerceptronDB.create(perceptron)
+        # check DB create
+        self.assertTrue(hasattr(perceptron,"id"),"ERROR : perceptron has no id")
         pass
     pass
 pass
