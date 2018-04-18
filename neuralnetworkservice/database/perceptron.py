@@ -8,12 +8,13 @@ connection = psycopg2.connect(host="yggdrasil", port="5433", dbname="neuronnetwo
 class PerceptronDB():
     @staticmethod
     def create(perceptron):
-        statement = "INSERT INTO neuronnetwork.PERCEPTRON (COMMENTS) VALUES (%s)"
+        statement = "INSERT INTO neuronnetwork.PERCEPTRON (COMMENTS) VALUES (%s) RETURNING ID"
         parameters = (perceptron.comments,)
         cursor = connection.cursor()
-        result = cursor.execute(statement, parameters)
+        cursor.execute(statement, parameters)
+        id = cursor.fetchone()
         connection.commit()
         cursor.close()
-        pass
+        return id
     pass
 pass
