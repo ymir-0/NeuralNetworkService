@@ -86,10 +86,13 @@ class PerceptronDB():
         cursor.execute(statement, parameters)
         attributs = cursor.fetchone()
         cursor.close()
-        # select layers
-        layers=LayerDB.selectAllByPerceptronId(id)
-        # construct & return perceptron
-        perceptron = Perceptron.constructFromAttributes(attributs[0],layers,attributs[1])
+        # create perceptron if need
+        perceptron = None
+        if attributs:
+            # select layers
+            layers=LayerDB.selectAllByPerceptronId(id)
+            # construct & return perceptron
+            perceptron = Perceptron.constructFromAttributes(attributs[0],layers,attributs[1])
         return perceptron
     @staticmethod
     def update(perceptron):
@@ -98,6 +101,18 @@ class PerceptronDB():
         # update perceptron
         statement = "UPDATE neuronnetwork.PERCEPTRON SET COMMENTS=%s WHERE ID=%s"
         parameters = (perceptron.comments,perceptron.id,)
+        cursor = connection.cursor()
+        cursor.execute(statement, parameters)
+        connection.commit()
+        cursor.close()
+        pass
+    @staticmethod
+    def deleteById(perceptronId):
+        # delete all layers
+        LayerDB.deleteAllByPerceptronId(perceptronId)
+        # delete all layers
+        statement = "DELETE FROM neuronnetwork.PERCEPTRON WHERE ID=%s"
+        parameters = (perceptronId,)
         cursor = connection.cursor()
         cursor.execute(statement, parameters)
         connection.commit()

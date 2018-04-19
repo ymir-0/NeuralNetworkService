@@ -21,13 +21,13 @@ class testPerceptronDB(TestCase):
         initialPerceptron = testPerceptronDB.randomPerceptron()
         # precheck
         self.assertFalse(hasattr(initialPerceptron,"id"),"ERROR : perceptron has id")
-        # call DB create
+        # call DB insert
         PerceptronDB.insert(initialPerceptron)
-        # check DB create
+        # check DB insert
         self.assertTrue(hasattr(initialPerceptron,"id"),"ERROR : perceptron has no id")
-        # call DB get by id
+        # call DB select by id
         fetchedInsertedPerceptron = PerceptronDB.selectById(initialPerceptron.id)
-        # check DB get by id
+        # check DB select by id
         self.assertEqual(initialPerceptron,fetchedInsertedPerceptron,"ERROR : inserted perceptron does not match")
         # call DB update
         newPerceptron = testPerceptronDB.randomPerceptron()
@@ -37,6 +37,11 @@ class testPerceptronDB(TestCase):
         fetchedUpdatedPerceptron = PerceptronDB.selectById(initialPerceptron.id)
         self.assertNotEqual(fetchedUpdatedPerceptron,fetchedInsertedPerceptron,"ERROR : perceptron not updated")
         self.assertEqual(fetchedUpdatedPerceptron,newPerceptron,"ERROR : updated perceptron does not match")
+        # call DB delete
+        PerceptronDB.deleteById(initialPerceptron.id)
+        # check DB delete
+        deletedPerceptron = PerceptronDB.selectById(initialPerceptron.id)
+        self.assertIsNone(deletedPerceptron,"ERROR : perceptron not deleted")
         pass
     pass
 pass
