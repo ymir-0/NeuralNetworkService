@@ -23,7 +23,8 @@ class testPerceptronDB(TestCase):
         self.assertTrue(hasattr(initialPerceptron,"id"),"ERROR : perceptron has no id")
         # call DB get by id
         fetchedPerceptron = PerceptronDB.getById(initialPerceptron.id)
-        self.assertEqual(initialPerceptron,fetchedPerceptron,"ERROR : perceptron are different")
+        # check DB get by id
+        self.assertEqual(initialPerceptron,fetchedPerceptron,"ERROR : perceptrons are different")
         pass
     pass
 pass
