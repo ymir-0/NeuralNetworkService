@@ -11,7 +11,7 @@ class LayerDB(Database):
         weights = [[float(__) for __ in _] for _ in layer.weights]
         biases = [float(_) for _ in layer.biases]
         # insert layer
-        statement = "INSERT INTO neuronnetwork.LAYER (ID_PERCEPTRON,DEPTH_INDEX,WEIGHTS,BIASES) VALUES (%s,%s,%s,%s)"
+        statement = "INSERT INTO "+Database.SCHEMA+".LAYER (ID_PERCEPTRON,DEPTH_INDEX,WEIGHTS,BIASES) VALUES (%s,%s,%s,%s)"
         parameters = (perceptronId,depthIndex,weights,biases,)
         cursor = Database.CONNECTION.cursor()
         raisedException = None
@@ -30,7 +30,7 @@ class LayerDB(Database):
         # initialize layers
         layers=list()
         # select all layers
-        statement = "SELECT WEIGHTS,BIASES FROM neuronnetwork.LAYER WHERE ID_PERCEPTRON=%s ORDER BY DEPTH_INDEX ASC"
+        statement = "SELECT WEIGHTS,BIASES FROM "+Database.SCHEMA+".LAYER WHERE ID_PERCEPTRON=%s ORDER BY DEPTH_INDEX ASC"
         parameters = (perceptronId,)
         cursor = Database.CONNECTION.cursor()
         try:
@@ -57,7 +57,7 @@ class LayerDB(Database):
     @staticmethod
     def deleteAllByPerceptronId(perceptronId):
         # delete all layers
-        statement = "DELETE FROM neuronnetwork.LAYER WHERE ID_PERCEPTRON=%s"
+        statement = "DELETE FROM "+Database.SCHEMA+".LAYER WHERE ID_PERCEPTRON=%s"
         parameters = (perceptronId,)
         cursor = Database.CONNECTION.cursor()
         raisedException = None
@@ -74,7 +74,7 @@ class LayerDB(Database):
     @staticmethod
     def deleteAll():
         # delete all layers
-        statement = "DELETE FROM neuronnetwork.LAYER"
+        statement = "DELETE FROM "+Database.SCHEMA+".LAYER"
         cursor = Database.CONNECTION.cursor()
         raisedException = None
         try:
@@ -94,7 +94,7 @@ class PerceptronDB(Database):
     @staticmethod
     def insert(perceptron):
         # insert perceptron
-        statement = "INSERT INTO neuronnetwork.PERCEPTRON (COMMENTS) VALUES (%s) RETURNING ID"
+        statement = "INSERT INTO "+Database.SCHEMA+".PERCEPTRON (COMMENTS) VALUES (%s) RETURNING ID"
         parameters = (perceptron.comments,)
         cursor = Database.CONNECTION.cursor()
         raisedException = None
@@ -117,7 +117,7 @@ class PerceptronDB(Database):
     @staticmethod
     def selectById(id):
         # select perceptron
-        statement = "SELECT COMMENTS FROM neuronnetwork.PERCEPTRON WHERE ID=%s"
+        statement = "SELECT COMMENTS FROM "+Database.SCHEMA+".PERCEPTRON WHERE ID=%s"
         parameters = (id,)
         cursor = Database.CONNECTION.cursor()
         try:
@@ -140,7 +140,7 @@ class PerceptronDB(Database):
             # update all layers
             LayerDB.updateByPerceptronId(perceptron.id, perceptron.layers)
             # update perceptron
-            statement = "UPDATE neuronnetwork.PERCEPTRON SET COMMENTS=%s WHERE ID=%s"
+            statement = "UPDATE "+Database.SCHEMA+".PERCEPTRON SET COMMENTS=%s WHERE ID=%s"
             parameters = (perceptron.comments, perceptron.id,)
             cursor = Database.CONNECTION.cursor()
             cursor.execute(statement, parameters)
@@ -158,7 +158,7 @@ class PerceptronDB(Database):
             # delete all layers
             LayerDB.deleteAllByPerceptronId(perceptronId)
             # delete all layers
-            statement = "DELETE FROM neuronnetwork.PERCEPTRON WHERE ID=%s"
+            statement = "DELETE FROM "+Database.SCHEMA+".PERCEPTRON WHERE ID=%s"
             parameters = (perceptronId,)
             cursor = Database.CONNECTION.cursor()
             raisedException = None
@@ -174,7 +174,7 @@ class PerceptronDB(Database):
     @staticmethod
     def selectAllIds():
         # select all ids
-        statement = "SELECT ID FROM neuronnetwork.PERCEPTRON ORDER BY ID ASC"
+        statement = "SELECT ID FROM "+Database.SCHEMA+".PERCEPTRON ORDER BY ID ASC"
         cursor = Database.CONNECTION.cursor()
         try:
             cursor.execute(statement)
@@ -189,7 +189,7 @@ class PerceptronDB(Database):
             # delete all layers
             LayerDB.deleteAll()
             # delete all perceptron
-            statement = "DELETE FROM neuronnetwork.PERCEPTRON"
+            statement = "DELETE FROM "+Database.SCHEMA+".PERCEPTRON"
             cursor = Database.CONNECTION.cursor()
             raisedException = None
             cursor.execute(statement)
