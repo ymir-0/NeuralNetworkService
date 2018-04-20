@@ -137,14 +137,14 @@ class PerceptronDB():
         return perceptron
     @staticmethod
     def update(perceptron):
-        # update all layers
-        LayerDB.updateByPerceptronId(perceptron.id, perceptron.layers)
-        # update perceptron
-        statement = "UPDATE neuronnetwork.PERCEPTRON SET COMMENTS=%s WHERE ID=%s"
-        parameters = (perceptron.comments,perceptron.id,)
-        cursor = connection.cursor()
         raisedException = None
         try:
+            # update all layers
+            LayerDB.updateByPerceptronId(perceptron.id, perceptron.layers)
+            # update perceptron
+            statement = "UPDATE neuronnetwork.PERCEPTRON SET COMMENTS=%s WHERE ID=%s"
+            parameters = (perceptron.comments, perceptron.id,)
+            cursor = connection.cursor()
             cursor.execute(statement, parameters)
             connection.commit()
         except Exception as exception :
