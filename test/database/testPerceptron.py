@@ -6,15 +6,9 @@ from random import randint, choice
 from string import ascii_letters
 from neuralnetworkcommon.perceptron import Perceptron, Layer
 from neuralnetworkservice.database.perceptron import PerceptronDB, LayerDB
+from neuralnetworkservice.database.database import Database
 # test perceptron
 class testPerceptronDB(TestCase):
-    @staticmethod
-    def randomPerceptron():
-        layersNumber = randint(2,12)
-        dimensions = [randint(2,100) for _ in range(layersNumber)]
-        comments = "".join([choice(ascii_letters) for _ in range(15)])
-        perceptron = Perceptron(dimensions,comments)
-        return perceptron
     # test CRUD OK
     def testCrudOK(self):
         # initialize random perceptron
@@ -43,7 +37,7 @@ class testPerceptronDB(TestCase):
         deletedPerceptron = PerceptronDB.selectById(initialPerceptron.id)
         self.assertIsNone(deletedPerceptron,"ERROR : perceptron not deleted")
         pass
-    # test CRUD OK
+    # test select/delete all OK
     def testSelectDeleteAll(self):
         # initialize random perceptrons
         initialIds=set()
@@ -100,5 +94,17 @@ class testPerceptronDB(TestCase):
             PerceptronDB.deleteById("")
             raise Exception("ERROR : Exception not raised")
         except Exception as exception: self.assertIsNotNone(exception,"ERROR : Exception not raised")
+    # utilities
+    @staticmethod
+    def randomPerceptron():
+        layersNumber = randint(2,12)
+        dimensions = [randint(2,100) for _ in range(layersNumber)]
+        comments = "".join([choice(ascii_letters) for _ in range(15)])
+        perceptron = Perceptron(dimensions,comments)
+        return perceptron
+    @classmethod
+    def tearDownClass(cls):
+        Database.closeConnection()
+        pass
     pass
 pass

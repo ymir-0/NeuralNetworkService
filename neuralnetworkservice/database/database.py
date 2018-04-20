@@ -6,5 +6,9 @@ from abc import ABC
 class Database(ABC):
     # static values
     CONNECTION = connect(host="yggdrasil", port="5433", dbname="neuronnetwork", user="neuronnetwork", password="neuronnetwork")
+    # close connection
+    @staticmethod
+    def closeConnection():
+        Database.CONNECTION.close()
     pass
 pass
