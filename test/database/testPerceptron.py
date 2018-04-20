@@ -4,8 +4,8 @@
 from unittest import TestCase
 from random import randint, choice
 from string import ascii_letters
-from neuralnetworkcommon.perceptron import Perceptron
-from neuralnetworkservice.database.perceptron import PerceptronDB
+from neuralnetworkcommon.perceptron import Perceptron, Layer
+from neuralnetworkservice.database.perceptron import PerceptronDB, LayerDB
 # test perceptron
 class testPerceptronDB(TestCase):
     @staticmethod
@@ -63,5 +63,42 @@ class testPerceptronDB(TestCase):
         deletedIds = PerceptronDB.selectAllIds()
         self.assertEqual(len(deletedIds),0,"ERROR : complete deletion failed")
         pass
+    # test layer error
+    def testLayerInsertByPerceptronIdAndDepthError(self):
+        try:
+            LayerDB.insertByPerceptronIdAndDepth("", 0, Layer(0,0))
+            raise Exception("ERROR : Exception not raised")
+        except Exception as exception: self.assertIsNotNone(exception,"ERROR : Exception not raised")
+    def testLayerSelectAllByPerceptronIdError(self):
+        try:
+            LayerDB.selectAllByPerceptronId("")
+            raise Exception("ERROR : Exception not raised")
+        except Exception as exception: self.assertIsNotNone(exception,"ERROR : Exception not raised")
+    def testLayerDeleteAllByPerceptronIdError(self):
+        try:
+            LayerDB.deleteAllByPerceptronId("")
+            raise Exception("ERROR : Exception not raised")
+        except Exception as exception: self.assertIsNotNone(exception,"ERROR : Exception not raised")
+    # test perceptron error
+    def testPerceptronInsertError(self):
+        try:
+            PerceptronDB.insert("")
+            raise Exception("ERROR : Exception not raised")
+        except Exception as exception: self.assertIsNotNone(exception,"ERROR : Exception not raised")
+    def testPerceptronSelectByIdError(self):
+        try:
+            PerceptronDB.selectById("")
+            raise Exception("ERROR : Exception not raised")
+        except Exception as exception: self.assertIsNotNone(exception,"ERROR : Exception not raised")
+    def testPerceptronUpdateError(self):
+        try:
+            PerceptronDB.update("")
+            raise Exception("ERROR : Exception not raised")
+        except Exception as exception: self.assertIsNotNone(exception,"ERROR : Exception not raised")
+    def testPerceptronDeleteByIdError(self):
+        try:
+            PerceptronDB.deleteById("")
+            raise Exception("ERROR : Exception not raised")
+        except Exception as exception: self.assertIsNotNone(exception,"ERROR : Exception not raised")
     pass
 pass

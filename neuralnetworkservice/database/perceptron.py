@@ -16,9 +16,16 @@ class LayerDB():
         statement = "INSERT INTO neuronnetwork.LAYER (ID_PERCEPTRON,DEPTH_INDEX,WEIGHTS,BIASES) VALUES (%s,%s,%s,%s)"
         parameters = (perceptronId,depthIndex,weights,biases,)
         cursor = connection.cursor()
-        cursor.execute(statement, parameters)
-        connection.commit()
-        cursor.close()
+        raisedException = None
+        try:
+            cursor.execute(statement, parameters)
+            connection.commit()
+        except Exception as exception :
+            connection.rollback()
+            raisedException = exception
+        finally:
+            cursor.close()
+            if raisedException : raise raisedException
         pass
     @staticmethod
     def selectAllByPerceptronId(perceptronId):
@@ -28,17 +35,18 @@ class LayerDB():
         statement = "SELECT WEIGHTS,BIASES FROM neuronnetwork.LAYER WHERE ID_PERCEPTRON=%s ORDER BY DEPTH_INDEX ASC"
         parameters = (perceptronId,)
         cursor = connection.cursor()
-        cursor.execute(statement, parameters)
-        # construct each layer
-        for attribut in cursor:
-            # def insert current layer
-            weights = [[float(__) for __ in _] for _ in attribut[0]]
-            biases = [float(_) for _ in attribut[1]]
-            layer=Layer.constructFromAttributes(weights,biases)
-            # fill layers
-            layers.append(layer)
-        # close cursor
-        cursor.close()
+        try:
+            cursor.execute(statement, parameters)
+            # construct each layer
+            for attribut in cursor:
+                # def insert current layer
+                weights = [[float(__) for __ in _] for _ in attribut[0]]
+                biases = [float(_) for _ in attribut[1]]
+                layer=Layer.constructFromAttributes(weights,biases)
+                # fill layers
+                layers.append(layer)
+        finally:
+            cursor.close()
         # return
         return layers
     @staticmethod
@@ -54,18 +62,32 @@ class LayerDB():
         statement = "DELETE FROM neuronnetwork.LAYER WHERE ID_PERCEPTRON=%s"
         parameters = (perceptronId,)
         cursor = connection.cursor()
-        cursor.execute(statement, parameters)
-        connection.commit()
-        cursor.close()
+        raisedException = None
+        try:
+            cursor.execute(statement, parameters)
+            connection.commit()
+        except Exception as exception :
+            connection.rollback()
+            raisedException = exception
+        finally:
+            cursor.close()
+            if raisedException : raise raisedException
         pass
     @staticmethod
     def deleteAll():
         # delete all layers
         statement = "DELETE FROM neuronnetwork.LAYER"
         cursor = connection.cursor()
-        cursor.execute(statement)
-        connection.commit()
-        cursor.close()
+        raisedException = None
+        try:
+            cursor.execute(statement)
+            connection.commit()
+        except Exception as exception :
+            connection.rollback()
+            raisedException = exception
+        finally:
+            cursor.close()
+            if raisedException : raise raisedException
         pass
     pass
 # perceptron
@@ -77,12 +99,20 @@ class PerceptronDB():
         statement = "INSERT INTO neuronnetwork.PERCEPTRON (COMMENTS) VALUES (%s) RETURNING ID"
         parameters = (perceptron.comments,)
         cursor = connection.cursor()
-        cursor.execute(statement, parameters)
-        id = cursor.fetchone()[0]
-        connection.commit()
-        cursor.close()
-        # insert each layer
-        for depthIndex, layer in enumerate(perceptron.layers): LayerDB.insertByPerceptronIdAndDepth(id, depthIndex, layer)
+        raisedException = None
+        try:
+            cursor.execute(statement, parameters)
+            id = cursor.fetchone()[0]
+            # insert each layer
+            for depthIndex, layer in enumerate(perceptron.layers): LayerDB.insertByPerceptronIdAndDepth(id, depthIndex, layer)
+            # commit when all is fine
+            connection.commit()
+        except Exception as exception :
+            connection.rollback()
+            raisedException = exception
+        finally:
+            cursor.close()
+            if raisedException : raise raisedException
         # set perceptron id
         perceptron.id = id
         pass
@@ -92,16 +122,18 @@ class PerceptronDB():
         statement = "SELECT COMMENTS FROM neuronnetwork.PERCEPTRON WHERE ID=%s"
         parameters = (id,)
         cursor = connection.cursor()
-        cursor.execute(statement, parameters)
-        attributs = cursor.fetchone()
-        cursor.close()
-        # create perceptron if need
-        perceptron = None
-        if attributs:
-            # select layers
-            layers=LayerDB.selectAllByPerceptronId(id)
-            # construct & return perceptron
-            perceptron = Perceptron.constructFromAttributes(id,layers,attributs[0])
+        try:
+            cursor.execute(statement, parameters)
+            attributs = cursor.fetchone()
+            # create perceptron if need
+            perceptron = None
+            if attributs:
+                # select layers
+                layers=LayerDB.selectAllByPerceptronId(id)
+                # construct & return perceptron
+                perceptron = Perceptron.constructFromAttributes(id,layers,attributs[0])
+        finally:
+            cursor.close()
         return perceptron
     @staticmethod
     def update(perceptron):
@@ -111,9 +143,16 @@ class PerceptronDB():
         statement = "UPDATE neuronnetwork.PERCEPTRON SET COMMENTS=%s WHERE ID=%s"
         parameters = (perceptron.comments,perceptron.id,)
         cursor = connection.cursor()
-        cursor.execute(statement, parameters)
-        connection.commit()
-        cursor.close()
+        raisedException = None
+        try:
+            cursor.execute(statement, parameters)
+            connection.commit()
+        except Exception as exception :
+            connection.rollback()
+            raisedException = exception
+        finally:
+            cursor.close()
+            if raisedException : raise raisedException
         pass
     @staticmethod
     def deleteById(perceptronId):
@@ -123,17 +162,27 @@ class PerceptronDB():
         statement = "DELETE FROM neuronnetwork.PERCEPTRON WHERE ID=%s"
         parameters = (perceptronId,)
         cursor = connection.cursor()
-        cursor.execute(statement, parameters)
-        connection.commit()
-        cursor.close()
+        raisedException = None
+        try:
+            cursor.execute(statement, parameters)
+            connection.commit()
+        except Exception as exception:
+            connection.rollback()
+            raisedException = exception
+        finally:
+            cursor.close()
+            if raisedException : raise raisedException
         pass
     @staticmethod
     def selectAllIds():
         # select all ids
         statement = "SELECT ID FROM neuronnetwork.PERCEPTRON ORDER BY ID ASC"
         cursor = connection.cursor()
-        cursor.execute(statement)
-        attributs = cursor.fetchall()
+        try:
+            cursor.execute(statement)
+            attributs = cursor.fetchall()
+        finally:
+            cursor.close()
         ids = set([ _[0] for _ in attributs])
         return ids
     @staticmethod
@@ -143,8 +192,15 @@ class PerceptronDB():
         # delete all perceptron
         statement = "DELETE FROM neuronnetwork.PERCEPTRON"
         cursor = connection.cursor()
-        cursor.execute(statement)
-        connection.commit()
-        cursor.close()
+        raisedException = None
+        try:
+            cursor.execute(statement)
+            connection.commit()
+        except Exception as exception:
+            connection.rollback()
+            raisedException = exception
+        finally:
+            cursor.close()
+            if raisedException : raise raisedException
     pass
 pass
