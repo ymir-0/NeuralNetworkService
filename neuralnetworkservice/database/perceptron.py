@@ -156,14 +156,14 @@ class PerceptronDB():
         pass
     @staticmethod
     def deleteById(perceptronId):
-        # delete all layers
-        LayerDB.deleteAllByPerceptronId(perceptronId)
-        # delete all layers
-        statement = "DELETE FROM neuronnetwork.PERCEPTRON WHERE ID=%s"
-        parameters = (perceptronId,)
-        cursor = connection.cursor()
-        raisedException = None
         try:
+            # delete all layers
+            LayerDB.deleteAllByPerceptronId(perceptronId)
+            # delete all layers
+            statement = "DELETE FROM neuronnetwork.PERCEPTRON WHERE ID=%s"
+            parameters = (perceptronId,)
+            cursor = connection.cursor()
+            raisedException = None
             cursor.execute(statement, parameters)
             connection.commit()
         except Exception as exception:
@@ -187,13 +187,13 @@ class PerceptronDB():
         return ids
     @staticmethod
     def deleteAll():
-        # delete all layers
-        LayerDB.deleteAll()
-        # delete all perceptron
-        statement = "DELETE FROM neuronnetwork.PERCEPTRON"
-        cursor = connection.cursor()
-        raisedException = None
         try:
+            # delete all layers
+            LayerDB.deleteAll()
+            # delete all perceptron
+            statement = "DELETE FROM neuronnetwork.PERCEPTRON"
+            cursor = connection.cursor()
+            raisedException = None
             cursor.execute(statement)
             connection.commit()
         except Exception as exception:
