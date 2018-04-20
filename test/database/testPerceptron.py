@@ -43,5 +43,25 @@ class testPerceptronDB(TestCase):
         deletedPerceptron = PerceptronDB.selectById(initialPerceptron.id)
         self.assertIsNone(deletedPerceptron,"ERROR : perceptron not deleted")
         pass
+    # test CRUD OK
+    def testSelectDeleteAll(self):
+        # initialize random perceptrons
+        initialIds=set()
+        perceptronNumber = randint(5, 10)
+        for _ in range(perceptronNumber):
+            perceptron = testPerceptronDB.randomPerceptron()
+            PerceptronDB.insert(perceptron)
+            initialIds.add(perceptron.id)
+            pass
+        # select IDs
+        fetchedIds = PerceptronDB.selectAllIds()
+        # check IDs
+        self.assertTrue(initialIds.issubset(fetchedIds),"ERROR : IDs selection does not match")
+        # delete all
+        PerceptronDB.deleteAll()
+        # check IDs
+        deletedIds = PerceptronDB.selectAllIds()
+        self.assertEqual(len(deletedIds),0,"ERROR : complete deletion failed")
+        pass
     pass
 pass

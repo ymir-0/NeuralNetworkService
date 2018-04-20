@@ -58,6 +58,15 @@ class LayerDB():
         connection.commit()
         cursor.close()
         pass
+    @staticmethod
+    def deleteAll():
+        # delete all layers
+        statement = "DELETE FROM neuronnetwork.LAYER"
+        cursor = connection.cursor()
+        cursor.execute(statement)
+        connection.commit()
+        cursor.close()
+        pass
     pass
 # perceptron
 class PerceptronDB():
@@ -80,7 +89,7 @@ class PerceptronDB():
     @staticmethod
     def selectById(id):
         # select perceptron
-        statement = "SELECT ID, COMMENTS FROM neuronnetwork.PERCEPTRON WHERE ID=%s"
+        statement = "SELECT COMMENTS FROM neuronnetwork.PERCEPTRON WHERE ID=%s"
         parameters = (id,)
         cursor = connection.cursor()
         cursor.execute(statement, parameters)
@@ -92,7 +101,7 @@ class PerceptronDB():
             # select layers
             layers=LayerDB.selectAllByPerceptronId(id)
             # construct & return perceptron
-            perceptron = Perceptron.constructFromAttributes(attributs[0],layers,attributs[1])
+            perceptron = Perceptron.constructFromAttributes(id,layers,attributs[0])
         return perceptron
     @staticmethod
     def update(perceptron):
@@ -118,5 +127,24 @@ class PerceptronDB():
         connection.commit()
         cursor.close()
         pass
+    @staticmethod
+    def selectAllIds():
+        # select all ids
+        statement = "SELECT ID FROM neuronnetwork.PERCEPTRON ORDER BY ID ASC"
+        cursor = connection.cursor()
+        cursor.execute(statement)
+        attributs = cursor.fetchall()
+        ids = set([ _[0] for _ in attributs])
+        return ids
+    @staticmethod
+    def deleteAll():
+        # delete all layers
+        LayerDB.deleteAll()
+        # delete all perceptron
+        statement = "DELETE FROM neuronnetwork.PERCEPTRON"
+        cursor = connection.cursor()
+        cursor.execute(statement)
+        connection.commit()
+        cursor.close()
     pass
 pass
