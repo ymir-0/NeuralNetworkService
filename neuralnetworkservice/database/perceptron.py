@@ -1,5 +1,4 @@
 # coding=utf-8
-__version__ = '0.0.0'
 # import
 from psycopg2 import connect
 from neuralnetworkcommon.perceptron import Perceptron, Layer
