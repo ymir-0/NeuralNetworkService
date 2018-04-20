@@ -2,10 +2,9 @@
 # import
 from psycopg2 import connect
 from neuralnetworkcommon.perceptron import Perceptron, Layer
-# constants
-connection = connect(host="yggdrasil", port="5433", dbname="neuronnetwork", user="neuronnetwork", password="neuronnetwork")
+from neuralnetworkservice.database.database import Database
 # layer
-class LayerDB():
+class LayerDB(Database):
     @staticmethod
     def insertByPerceptronIdAndDepth(perceptronId, depthIndex, layer):
         # cast arrays elements to float
@@ -14,13 +13,13 @@ class LayerDB():
         # insert layer
         statement = "INSERT INTO neuronnetwork.LAYER (ID_PERCEPTRON,DEPTH_INDEX,WEIGHTS,BIASES) VALUES (%s,%s,%s,%s)"
         parameters = (perceptronId,depthIndex,weights,biases,)
-        cursor = connection.cursor()
+        cursor = Database.CONNECTION.cursor()
         raisedException = None
         try:
             cursor.execute(statement, parameters)
-            connection.commit()
+            Database.CONNECTION.commit()
         except Exception as exception :
-            connection.rollback()
+            Database.CONNECTION.rollback()
             raisedException = exception
         finally:
             cursor.close()
@@ -33,7 +32,7 @@ class LayerDB():
         # select all layers
         statement = "SELECT WEIGHTS,BIASES FROM neuronnetwork.LAYER WHERE ID_PERCEPTRON=%s ORDER BY DEPTH_INDEX ASC"
         parameters = (perceptronId,)
-        cursor = connection.cursor()
+        cursor = Database.CONNECTION.cursor()
         try:
             cursor.execute(statement, parameters)
             # construct each layer
@@ -60,13 +59,13 @@ class LayerDB():
         # delete all layers
         statement = "DELETE FROM neuronnetwork.LAYER WHERE ID_PERCEPTRON=%s"
         parameters = (perceptronId,)
-        cursor = connection.cursor()
+        cursor = Database.CONNECTION.cursor()
         raisedException = None
         try:
             cursor.execute(statement, parameters)
-            connection.commit()
+            Database.CONNECTION.commit()
         except Exception as exception :
-            connection.rollback()
+            Database.CONNECTION.rollback()
             raisedException = exception
         finally:
             cursor.close()
@@ -76,13 +75,13 @@ class LayerDB():
     def deleteAll():
         # delete all layers
         statement = "DELETE FROM neuronnetwork.LAYER"
-        cursor = connection.cursor()
+        cursor = Database.CONNECTION.cursor()
         raisedException = None
         try:
             cursor.execute(statement)
-            connection.commit()
+            Database.CONNECTION.commit()
         except Exception as exception :
-            connection.rollback()
+            Database.CONNECTION.rollback()
             raisedException = exception
         finally:
             cursor.close()
@@ -90,14 +89,14 @@ class LayerDB():
         pass
     pass
 # perceptron
-class PerceptronDB():
+class PerceptronDB(Database):
     # TODO : add a compensation / full rollback system if failure
     @staticmethod
     def insert(perceptron):
         # insert perceptron
         statement = "INSERT INTO neuronnetwork.PERCEPTRON (COMMENTS) VALUES (%s) RETURNING ID"
         parameters = (perceptron.comments,)
-        cursor = connection.cursor()
+        cursor = Database.CONNECTION.cursor()
         raisedException = None
         try:
             cursor.execute(statement, parameters)
@@ -105,9 +104,9 @@ class PerceptronDB():
             # insert each layer
             for depthIndex, layer in enumerate(perceptron.layers): LayerDB.insertByPerceptronIdAndDepth(id, depthIndex, layer)
             # commit when all is fine
-            connection.commit()
+            Database.CONNECTION.commit()
         except Exception as exception :
-            connection.rollback()
+            Database.CONNECTION.rollback()
             raisedException = exception
         finally:
             cursor.close()
@@ -120,7 +119,7 @@ class PerceptronDB():
         # select perceptron
         statement = "SELECT COMMENTS FROM neuronnetwork.PERCEPTRON WHERE ID=%s"
         parameters = (id,)
-        cursor = connection.cursor()
+        cursor = Database.CONNECTION.cursor()
         try:
             cursor.execute(statement, parameters)
             attributs = cursor.fetchone()
@@ -143,11 +142,11 @@ class PerceptronDB():
             # update perceptron
             statement = "UPDATE neuronnetwork.PERCEPTRON SET COMMENTS=%s WHERE ID=%s"
             parameters = (perceptron.comments, perceptron.id,)
-            cursor = connection.cursor()
+            cursor = Database.CONNECTION.cursor()
             cursor.execute(statement, parameters)
-            connection.commit()
+            Database.CONNECTION.commit()
         except Exception as exception :
-            connection.rollback()
+            Database.CONNECTION.rollback()
             raisedException = exception
         finally:
             cursor.close()
@@ -161,12 +160,12 @@ class PerceptronDB():
             # delete all layers
             statement = "DELETE FROM neuronnetwork.PERCEPTRON WHERE ID=%s"
             parameters = (perceptronId,)
-            cursor = connection.cursor()
+            cursor = Database.CONNECTION.cursor()
             raisedException = None
             cursor.execute(statement, parameters)
-            connection.commit()
+            Database.CONNECTION.commit()
         except Exception as exception:
-            connection.rollback()
+            Database.CONNECTION.rollback()
             raisedException = exception
         finally:
             cursor.close()
@@ -176,7 +175,7 @@ class PerceptronDB():
     def selectAllIds():
         # select all ids
         statement = "SELECT ID FROM neuronnetwork.PERCEPTRON ORDER BY ID ASC"
-        cursor = connection.cursor()
+        cursor = Database.CONNECTION.cursor()
         try:
             cursor.execute(statement)
             attributs = cursor.fetchall()
@@ -191,12 +190,12 @@ class PerceptronDB():
             LayerDB.deleteAll()
             # delete all perceptron
             statement = "DELETE FROM neuronnetwork.PERCEPTRON"
-            cursor = connection.cursor()
+            cursor = Database.CONNECTION.cursor()
             raisedException = None
             cursor.execute(statement)
-            connection.commit()
+            Database.CONNECTION.commit()
         except Exception as exception:
-            connection.rollback()
+            Database.CONNECTION.rollback()
             raisedException = exception
         finally:
             cursor.close()
