@@ -16,7 +16,7 @@ CONFIGURATION=configurationLoader.loadedConfiguration["service"]
 # initialize service
 application = Flask(CONFIGURATION["endpoint"])
 API = Api(application)
-API.add_resource(GlobalPerceptron, '/perceptron')
-if __name__ == '__main__':
+API.add_resource(GlobalPerceptron, "/perceptron")
+if __name__ == "__main__":
     application.run(CONFIGURATION["host"],int(CONFIGURATION["port"]))
 pass
