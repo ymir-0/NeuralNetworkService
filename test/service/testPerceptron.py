@@ -9,11 +9,12 @@ class testPerceptronWS(TestCase):
     # test CRUD OK
     def testGlobalGetOk(self):
         #
-        result = testPerceptronWS.APPLICATION.get("/perceptron")
+        kw = {"name": "ymir"}
+        result = testPerceptronWS.APPLICATION.post("/perceptron",data={"name": "ymir"})
         pass
     # utilities
-    @staticmethod
-    def tearDownClass():
+    @classmethod
+    def setUpClass(cls):
         testPerceptronWS.APPLICATION.testing = True
     pass
 pass
