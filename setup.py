@@ -36,7 +36,7 @@ setup(
     description="Neural network service tools",
     packages=modules,
     dependency_links=[YGGDRASIL_REP+"pythoncommontools",YGGDRASIL_REP+"neuralnetworkcommon"], # 91.121.9.53 : yggdrasil
-    install_requires=["pythoncommontools","neuralnetworkcommon","psycopg2","psycopg2-binary"],
+    install_requires=["pythoncommontools","neuralnetworkcommon","psycopg2","psycopg2-binary","flask","flask_restful"],
     classifiers=[
         'Programming Language :: Python :: 3',
     ],
