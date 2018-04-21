@@ -3,9 +3,8 @@
 from flask_restful import Resource
 from flask import request
 from neuralnetworkcommon.perceptron import Perceptron
-from pythoncommontools.jsonEncoderDecoder.complexJsonEncoderDecoder import ComplexJsonEncoder, ComplexJsonDecoder
-from json import loads, dumps
 from neuralnetworkservice.database.perceptron import PerceptronDB
+from neuralnetworkservice.service import service
 # random perceptron resource
 class RandomPerceptron(Resource):
     # TODO : delete or make optionnal the comments
@@ -16,9 +15,7 @@ class RandomPerceptron(Resource):
         comments = parameters["comments"]
         # generate & format random perceptron
         rawPerceptron = Perceptron.constructRandomFromDimensions(dimensions,comments)
-        dumpedPerceptron = ComplexJsonEncoder.dumpComplexObject(rawPerceptron)
-        # INFO : it is important to load to avoid embedded string
-        loadedPerceptron = loads(dumpedPerceptron)
+        loadedPerceptron = service.dumpObject(rawPerceptron)
         # return
         return loadedPerceptron
 # global perceptron resource
@@ -27,9 +24,7 @@ class GlobalPerceptron(Resource):
     def post(self):
         # parse parameters
         loadedPerceptron = request.get_json()
-        # INFO : it is important to dumps to have requested string type
-        dumpedPerceptron = dumps(loadedPerceptron)
-        rawPerceptron = ComplexJsonDecoder.loadComplexObject(dumpedPerceptron)
+        rawPerceptron = service.loadObject(loadedPerceptron)
         # insert perceptron
         PerceptronDB.insert(rawPerceptron)
         # return
@@ -44,9 +39,7 @@ class SpecificPerceptron(Resource):
     # select a perceptron
     def get(self,perceptronId):
         rawPerceptron = PerceptronDB.selectById(perceptronId)
-        dumpedPerceptron = ComplexJsonEncoder.dumpComplexObject(rawPerceptron)
-        # INFO : it is important to load to avoid embedded string
-        loadedPerceptron = loads(dumpedPerceptron)
+        loadedPerceptron = service.dumpObject(rawPerceptron)
         # return
         return loadedPerceptron
     # update a perceptron
@@ -58,9 +51,7 @@ class SpecificPerceptron(Resource):
     def put(self,perceptronId):
         # parse parameters
         loadedPerceptron = request.get_json()
-        # INFO : it is important to dumps to have requested string type
-        dumpedPerceptron = dumps(loadedPerceptron)
-        rawPerceptron = ComplexJsonDecoder.loadComplexObject(dumpedPerceptron)
+        rawPerceptron = service.loadObject(loadedPerceptron)
         # set explicit ID
         rawPerceptron.id = perceptronId
         # insert perceptron
