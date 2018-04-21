@@ -7,21 +7,23 @@ from json import dumps
 from random import randint, choice
 from string import ascii_letters
 from pythoncommontools.jsonEncoderDecoder.complexJsonEncoderDecoder import ComplexJsonDecoder
+from neuralnetworkcommon.perceptron import Perceptron
 # test perceptron
 class testPerceptronWS(TestCase):
     APPLICATION = application.test_client()
     # test CRUD OK
-    def testGlobalGetOk(self):
+    def testRandomGetOk(self):
         # randomize layers numbers, dimensions & comments
         layersNumber = randint(2,12)
         dimensions = [randint(2,100) for _ in range(layersNumber)]
         comments = "".join([choice(ascii_letters) for _ in range(15)])
         # get randomized perceptron
-        response = testPerceptronWS.APPLICATION.post("/perceptron",data=dumps({"dimensions": dimensions,"comments":comments}),content_type='application/json')
+        response = testPerceptronWS.APPLICATION.get("/perceptron/random",data=dumps({"dimensions": dimensions,"comments":comments}),content_type='application/json')
         dumpedPerceptron = response.data.decode()
         rawPerceptron = ComplexJsonDecoder.loadComplexObject(dumpedPerceptron)
-        #
-        pass
+        # check perceptron
+        self.assertEqual(response.status_code,200,"ERROR : response status does not match")
+        self.assertTrue(type(rawPerceptron)==Perceptron,"ERROR : perceptron type does not match")
     # utilities
     @classmethod
     def setUpClass(cls):
