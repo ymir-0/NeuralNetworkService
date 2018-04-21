@@ -8,7 +8,6 @@ from random import randint, choice
 from string import ascii_letters
 from pythoncommontools.jsonEncoderDecoder.complexJsonEncoderDecoder import ComplexJsonEncoder, ComplexJsonDecoder
 from neuralnetworkcommon.perceptron import Perceptron
-from json import loads
 # test perceptron
 class testPerceptronWS(TestCase):
     APPLICATION = application.test_client()
@@ -34,9 +33,20 @@ class testPerceptronWS(TestCase):
         comments = "".join([choice(ascii_letters) for _ in range(15)])
         rawInitialPerceptron = Perceptron.constructRandomFromDimensions(dimensions,comments)
         dumpedInitialPerceptron = ComplexJsonEncoder.dumpComplexObject(rawInitialPerceptron)
-        loadedInitialPerceptron = loads(dumpedInitialPerceptron)
+        # precheck
+        self.assertFalse(hasattr(rawInitialPerceptron,"id"),"ERROR : perceptron has id")
         # create perceptron
-        initialPerceptronId = testPerceptronWS.APPLICATION.post("/perceptron",data=dumpedInitialPerceptron,content_type=testPerceptronWS.CONTENT_TYPE)
+        response = testPerceptronWS.APPLICATION.post("/perceptron",data=dumpedInitialPerceptron,content_type=testPerceptronWS.CONTENT_TYPE)
+        perceptronId = int(response.data)
+        # check creation
+        self.assertIsNotNone(perceptronId,"ERROR : perceptron has no id")
+        rawInitialPerceptron.id = perceptronId
+        # read perceptron
+        response = testPerceptronWS.APPLICATION.get("/perceptron/"+str(perceptronId))
+        dumpedPerceptron = response.data.decode()
+        rawFetchedPerceptron = ComplexJsonDecoder.loadComplexObject(dumpedPerceptron)
+        # check reading
+        self.assertEqual(rawInitialPerceptron,rawFetchedPerceptron,"ERROR : inserted perceptron does not match")
         #
         pass
     # utilities

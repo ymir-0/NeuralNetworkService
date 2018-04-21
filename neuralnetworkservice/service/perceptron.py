@@ -42,7 +42,12 @@ class GlobalPerceptron(Resource):
 # specific perceptron resource
 class SpecificPerceptron(Resource):
     # select a perceptron
-    def get(self):
-        return {'hello': 'world'}
+    def get(self,perceptronId):
+        rawPerceptron = PerceptronDB.selectById(perceptronId)
+        dumpedPerceptron = ComplexJsonEncoder.dumpComplexObject(rawPerceptron)
+        # INFO : it is important to load to avoid embedded string
+        loadedPerceptron = loads(dumpedPerceptron)
+        # return
+        return loadedPerceptron
     pass
 pass

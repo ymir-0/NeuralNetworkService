@@ -6,7 +6,7 @@ from flask_restful import Api
 from pythoncommontools.configurationLoader import configurationLoader
 from os import sep
 from os.path import join, realpath
-from neuralnetworkservice.service.perceptron import RandomPerceptron, GlobalPerceptron
+from neuralnetworkservice.service.perceptron import RandomPerceptron, GlobalPerceptron, SpecificPerceptron
 # contants
 CURRENT_DIRECTORY = realpath(__file__).rsplit(sep, 1)[0]
 CONFIGURATION_FILE=join(CURRENT_DIRECTORY,"..","conf","neuralnetworkservice.conf")
@@ -18,6 +18,8 @@ application = Flask(CONFIGURATION["endpoint"])
 API = Api(application)
 API.add_resource(RandomPerceptron, "/perceptron/random")
 API.add_resource(GlobalPerceptron, "/perceptron")
+API.add_resource(SpecificPerceptron, "/perceptron/<int:perceptronId>")
+# start service
 if __name__ == "__main__":
     application.run(CONFIGURATION["host"],int(CONFIGURATION["port"]))
 pass
