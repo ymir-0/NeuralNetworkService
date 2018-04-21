@@ -29,9 +29,4 @@ class Database(ABC):
         password=CONFIGURATION["password"]
     )
     SCHEMA=password=CONFIGURATION["schema"]
-    # close connection
-    @staticmethod
-    def closeConnection():
-        Database.CONNECTION.close()
-    pass
 pass

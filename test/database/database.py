@@ -6,6 +6,6 @@ from neuralnetworkservice.database.database import Database
 class TestDatabase(TestCase):
     @classmethod
     def tearDownClass(cls):
-        Database.closeConnection()
+        Database.CONNECTION.close()
     pass
 pass
