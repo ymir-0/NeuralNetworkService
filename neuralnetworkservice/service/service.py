@@ -8,6 +8,7 @@ from os.path import join, realpath
 from neuralnetworkservice.service.perceptron import RandomPerceptron, GlobalPerceptron, SpecificPerceptron
 from pythoncommontools.jsonEncoderDecoder.complexJsonEncoderDecoder import ComplexJsonEncoder, ComplexJsonDecoder
 from json import loads, dumps
+from flask import request, jsonify
 # contants
 CURRENT_DIRECTORY = realpath(__file__).rsplit(sep, 1)[0]
 CONFIGURATION_FILE=join(CURRENT_DIRECTORY,"..","conf","neuralnetworkservice.conf")
@@ -26,9 +27,14 @@ def dumpObject(rawObject):
     # INFO : it is important to load to avoid embedded string
     loadedObject = loads(dumpedObject)
     return loadedObject
-def loadObject(loadedObject):
+def loadObject(request):
+    loadedObject = request.get_json()
     # INFO : it is important to dumps to have requested string type
     dumpedObject = dumps(loadedObject)
     rawObject = ComplexJsonDecoder.loadComplexObject(dumpedObject)
     return rawObject
+def responseError(exception):
+    responseError = jsonify(exception.args)
+    responseError.status_code = 500
+    return responseError
 pass

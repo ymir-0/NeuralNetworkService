@@ -7,6 +7,10 @@ from neuralnetworkcommon.perceptron import Perceptron
 from test.service import service
 from test import commonUtilities
 from random import randint
+# create bad perceptron
+rawBadPerceptron = Perceptron.constructRandomFromDimensions([1, 1], "")
+rawBadPerceptron.layers[0].biases[0] = ""
+dumpedBadPerceptron = ComplexJsonEncoder.dumpComplexObject(rawBadPerceptron)
 # test perceptron
 resource = "/perceptron"
 class testPerceptronWS(service.TestService):
@@ -81,5 +85,16 @@ class testPerceptronWS(service.TestService):
         deletedIds = service.loadData(response.data)
         self.assertEqual(len(deletedIds),0,"ERROR : complete deletion failed")
         pass
+    # test error
+    def testPostError(self):
+        response = service.clientApplication.post(resource, data=dumpedBadPerceptron, content_type=service.contentType)
+        self.assertEqual(response.status_code, 500, "ERROR : Status code not expected")
+        error = service.loadData(response.data)
+        self.assertNotIn("Internal Server Error", error, "ERROR : Error message not expected")
+    def testPutError(self):
+        response = service.clientApplication.put("/".join((resource, "0",)), data=dumpedBadPerceptron, content_type=service.contentType)
+        self.assertEqual(response.status_code, 500, "ERROR : Status code not expected")
+        error = service.loadData(response.data)
+        self.assertNotIn("Internal Server Error", error, "ERROR : Error message not expected")
     pass
 pass

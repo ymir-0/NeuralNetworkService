@@ -23,12 +23,16 @@ class GlobalPerceptron(Resource):
     # create a perceptron
     def post(self):
         # parse parameters
-        loadedPerceptron = request.get_json()
-        rawPerceptron = service.loadObject(loadedPerceptron)
+        rawPerceptron = service.loadObject(request)
         # insert perceptron
-        PerceptronDB.insert(rawPerceptron)
-        # return
-        return rawPerceptron.id
+        response = None
+        try:
+            PerceptronDB.insert(rawPerceptron)
+            response = rawPerceptron.id
+        except Exception as exception:
+            response = service.responseError(exception)
+        finally:
+            return response
     pass
     # get all perceptrons IDs
     def get(self):
@@ -55,12 +59,18 @@ class SpecificPerceptron(Resource):
     '''
     def put(self,perceptronId):
         # parse parameters
-        loadedPerceptron = request.get_json()
-        rawPerceptron = service.loadObject(loadedPerceptron)
+        rawPerceptron = service.loadObject(request)
         # set explicit ID
         rawPerceptron.id = perceptronId
         # insert perceptron
-        PerceptronDB.update(rawPerceptron)
+        response = None
+        try:
+            PerceptronDB.update(rawPerceptron)
+        except Exception as exception:
+            response = service.responseError(exception)
+        finally:
+            return response
+        pass
     # delete a perceptron
     def delete(self,perceptronId):
         PerceptronDB.deleteById(perceptronId)
