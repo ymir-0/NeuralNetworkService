@@ -1,14 +1,13 @@
 #!/usr/bin/env python3
 # coding=utf-8
 # import
-from unittest import TestCase
 from random import randint, choice
 from string import ascii_letters
 from neuralnetworkcommon.perceptron import Perceptron, Layer
 from neuralnetworkservice.database.perceptron import PerceptronDB, LayerDB
-from neuralnetworkservice.database.database import Database
+from test.database.database import TestDatabase
 # test perceptron
-class testPerceptronDB(TestCase):
+class testPerceptronDB(TestDatabase):
     # test CRUD OK
     def testCrudOK(self):
         # initialize random perceptron
@@ -102,9 +101,5 @@ class testPerceptronDB(TestCase):
         comments = "".join([choice(ascii_letters) for _ in range(15)])
         perceptron = Perceptron.constructRandomFromDimensions(dimensions,comments)
         return perceptron
-    @classmethod
-    def tearDownClass(cls):
-        Database.closeConnection()
-        pass
     pass
 pass
