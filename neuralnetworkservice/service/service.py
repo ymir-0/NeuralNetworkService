@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # coding=utf-8
 # import
 from flask import Flask
@@ -19,7 +18,5 @@ API = Api(application)
 API.add_resource(RandomPerceptron, "/perceptron/random")
 API.add_resource(GlobalPerceptron, "/perceptron")
 API.add_resource(SpecificPerceptron, "/perceptron/<int:perceptronId>")
-# start service
-if __name__ == "__main__":
-    application.run(CONFIGURATION["host"],int(CONFIGURATION["port"]))
+#
 pass
