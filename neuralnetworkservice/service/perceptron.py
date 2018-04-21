@@ -65,5 +65,8 @@ class SpecificPerceptron(Resource):
         rawPerceptron.id = perceptronId
         # insert perceptron
         PerceptronDB.update(rawPerceptron)
+    # delete a perceptron
+    def delete(self,perceptronId):
+        PerceptronDB.deleteById(perceptronId)
     pass
 pass

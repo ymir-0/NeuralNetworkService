@@ -54,7 +54,13 @@ class testPerceptronWS(TestCase):
         self.assertNotEqual(rawFetchedUpdatedPerceptron,rawFetchedInsertedPerceptron,"ERROR : perceptron not updated")
         rawNewPerceptron.id = perceptronId
         self.assertEqual(rawFetchedUpdatedPerceptron,rawNewPerceptron,"ERROR : updated perceptron does not match")
-        #
+        # delete perceptron
+        testPerceptronWS.APPLICATION.delete("/perceptron/" + str(perceptronId))
+        # check deletion
+        response = testPerceptronWS.APPLICATION.get("/perceptron/"+str(perceptronId))
+        dumpedPerceptron = response.data.decode().strip()
+        rawDeletedPerceptron = ComplexJsonDecoder.loadComplexObject(dumpedPerceptron)
+        self.assertIsNone(rawDeletedPerceptron,"ERROR : perceptron not deleted")
         pass
     # utilities
     @classmethod
