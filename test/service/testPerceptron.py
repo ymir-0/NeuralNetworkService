@@ -12,11 +12,12 @@ from neuralnetworkcommon.perceptron import Perceptron
 class testPerceptronWS(TestCase):
     APPLICATION = application.test_client()
     CONTENT_TYPE = "application/json"
+    RESOURCE = "/perceptron"
     # test random generation
     def testRandomGetOk(self):
         # get randomized perceptron
         dimensions, comments = testPerceptronWS.genereteRandomPerceptronParameters()
-        response = testPerceptronWS.APPLICATION.get("/perceptron/random",data=dumps({"dimensions": dimensions,"comments":comments}),content_type=testPerceptronWS.CONTENT_TYPE)
+        response = testPerceptronWS.APPLICATION.get(testPerceptronWS.RESOURCE+"/random",data=dumps({"dimensions": dimensions,"comments":comments}),content_type=testPerceptronWS.CONTENT_TYPE)
         dumpedPerceptron = response.data.decode()
         rawPerceptron = ComplexJsonDecoder.loadComplexObject(dumpedPerceptron)
         # check perceptron
@@ -31,13 +32,14 @@ class testPerceptronWS(TestCase):
         # precheck
         self.assertFalse(hasattr(rawInitialPerceptron,"id"),"ERROR : perceptron has id")
         # create perceptron
-        response = testPerceptronWS.APPLICATION.post("/perceptron",data=dumpedInitialPerceptron,content_type=testPerceptronWS.CONTENT_TYPE)
+        response = testPerceptronWS.APPLICATION.post(testPerceptronWS.RESOURCE,data=dumpedInitialPerceptron,content_type=testPerceptronWS.CONTENT_TYPE)
         perceptronId = int(response.data)
         # check creation
         self.assertIsNotNone(perceptronId,"ERROR : perceptron has no id")
         rawInitialPerceptron.id = perceptronId
+        specificResource = "/".join((testPerceptronWS.RESOURCE, str(perceptronId),))
         # read perceptron
-        response = testPerceptronWS.APPLICATION.get("/perceptron/"+str(perceptronId))
+        response = testPerceptronWS.APPLICATION.get(specificResource)
         dumpedPerceptron = response.data.decode()
         rawFetchedInsertedPerceptron = ComplexJsonDecoder.loadComplexObject(dumpedPerceptron)
         # check reading
@@ -46,18 +48,18 @@ class testPerceptronWS(TestCase):
         dimensions, comments = testPerceptronWS.genereteRandomPerceptronParameters()
         rawNewPerceptron = Perceptron.constructRandomFromDimensions(dimensions,comments)
         dumpedNewPerceptron = ComplexJsonEncoder.dumpComplexObject(rawNewPerceptron)
-        testPerceptronWS.APPLICATION.put("/perceptron/"+str(perceptronId),data=dumpedNewPerceptron,content_type=testPerceptronWS.CONTENT_TYPE)
+        testPerceptronWS.APPLICATION.put(specificResource,data=dumpedNewPerceptron,content_type=testPerceptronWS.CONTENT_TYPE)
         # check update
-        response = testPerceptronWS.APPLICATION.get("/perceptron/"+str(perceptronId))
+        response = testPerceptronWS.APPLICATION.get(specificResource)
         dumpedPerceptron = response.data.decode()
         rawFetchedUpdatedPerceptron = ComplexJsonDecoder.loadComplexObject(dumpedPerceptron)
         self.assertNotEqual(rawFetchedUpdatedPerceptron,rawFetchedInsertedPerceptron,"ERROR : perceptron not updated")
         rawNewPerceptron.id = perceptronId
         self.assertEqual(rawFetchedUpdatedPerceptron,rawNewPerceptron,"ERROR : updated perceptron does not match")
         # delete perceptron
-        testPerceptronWS.APPLICATION.delete("/perceptron/" + str(perceptronId))
+        testPerceptronWS.APPLICATION.delete(specificResource)
         # check deletion
-        response = testPerceptronWS.APPLICATION.get("/perceptron/"+str(perceptronId))
+        response = testPerceptronWS.APPLICATION.get(specificResource)
         dumpedPerceptron = response.data.decode().strip()
         rawDeletedPerceptron = ComplexJsonDecoder.loadComplexObject(dumpedPerceptron)
         self.assertIsNone(rawDeletedPerceptron,"ERROR : perceptron not deleted")
