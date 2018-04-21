@@ -1,21 +1,20 @@
 #!/usr/bin/env python3
 # coding=utf-8
 # import
-from unittest import TestCase
 from json import dumps
 from random import randint, choice
 from string import ascii_letters
-from pythoncommontools.jsonEncoderDecoder.complexJsonEncoderDecoder import ComplexJsonEncoder, ComplexJsonDecoder
+from pythoncommontools.jsonEncoderDecoder.complexJsonEncoderDecoder import ComplexJsonEncoder
 from neuralnetworkcommon.perceptron import Perceptron
 from test.service import service
 # test perceptron
 resource = "/perceptron"
-class testPerceptronWS(TestCase):
+class testPerceptronWS(service.TestService):
     # test random generation
     def testRandomGetOk(self):
         # get randomized perceptron
         dimensions, comments = testPerceptronWS.genereteRandomPerceptronParameters()
-        response = service.clientApplication.get(resource+"/random",data=dumps({"dimensions": dimensions,"comments":comments}),content_type=service.contentType)
+        response = service.clientApplication.get("/".join((resource, "random",)),data=dumps({"dimensions": dimensions,"comments":comments}),content_type=service.contentType)
         perceptron = service.loadData(response.data)
         # check perceptron
         self.assertEqual(response.status_code,200,"ERROR : response status does not match")
@@ -59,9 +58,6 @@ class testPerceptronWS(TestCase):
         self.assertIsNone(deletedPerceptron,"ERROR : perceptron not deleted")
         pass
     # utilities
-    @classmethod
-    def setUpClass(cls):
-        service.clientApplication.testing = True
     @staticmethod
     def genereteRandomPerceptronParameters():
         layersNumber = randint(2,12)
