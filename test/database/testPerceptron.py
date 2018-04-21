@@ -100,7 +100,7 @@ class testPerceptronDB(TestCase):
         layersNumber = randint(2,12)
         dimensions = [randint(2,100) for _ in range(layersNumber)]
         comments = "".join([choice(ascii_letters) for _ in range(15)])
-        perceptron = Perceptron(dimensions,comments)
+        perceptron = Perceptron.constructRandomFromDimensions(dimensions,comments)
         return perceptron
     @classmethod
     def tearDownClass(cls):

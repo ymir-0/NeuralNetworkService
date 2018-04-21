@@ -135,6 +135,7 @@ class PerceptronDB(Database):
         return perceptron
     @staticmethod
     def update(perceptron):
+        cursor = Database.CONNECTION.cursor()
         raisedException = None
         try:
             # update all layers
@@ -142,7 +143,6 @@ class PerceptronDB(Database):
             # update perceptron
             statement = "UPDATE "+Database.SCHEMA+".PERCEPTRON SET COMMENTS=%s WHERE ID=%s"
             parameters = (perceptron.comments, perceptron.id,)
-            cursor = Database.CONNECTION.cursor()
             cursor.execute(statement, parameters)
             Database.CONNECTION.commit()
         except Exception as exception :
@@ -154,14 +154,14 @@ class PerceptronDB(Database):
         pass
     @staticmethod
     def deleteById(perceptronId):
+        cursor = Database.CONNECTION.cursor()
+        raisedException = None
         try:
             # delete all layers
             LayerDB.deleteAllByPerceptronId(perceptronId)
             # delete all layers
             statement = "DELETE FROM "+Database.SCHEMA+".PERCEPTRON WHERE ID=%s"
             parameters = (perceptronId,)
-            cursor = Database.CONNECTION.cursor()
-            raisedException = None
             cursor.execute(statement, parameters)
             Database.CONNECTION.commit()
         except Exception as exception:
@@ -185,13 +185,13 @@ class PerceptronDB(Database):
         return ids
     @staticmethod
     def deleteAll():
+        cursor = Database.CONNECTION.cursor()
+        raisedException = None
         try:
             # delete all layers
             LayerDB.deleteAll()
             # delete all perceptron
             statement = "DELETE FROM "+Database.SCHEMA+".PERCEPTRON"
-            cursor = Database.CONNECTION.cursor()
-            raisedException = None
             cursor.execute(statement)
             Database.CONNECTION.commit()
         except Exception as exception:
