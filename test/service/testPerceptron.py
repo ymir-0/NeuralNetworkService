@@ -6,6 +6,7 @@ from pythoncommontools.jsonEncoderDecoder.complexJsonEncoderDecoder import Compl
 from neuralnetworkcommon.perceptron import Perceptron
 from test.service import service
 from test import commonUtilities
+from random import randint
 # test perceptron
 resource = "/perceptron"
 class testPerceptronWS(service.TestService):
@@ -55,6 +56,30 @@ class testPerceptronWS(service.TestService):
         response = service.clientApplication.get(specificResource)
         deletedPerceptron = service.loadData(response.data)
         self.assertIsNone(deletedPerceptron,"ERROR : perceptron not deleted")
+        pass
+    # test select/delete all OK
+    def testSelectDeleteAll(self):
+        # initialize random perceptrons
+        initialIds=set()
+        perceptronNumber = randint(5, 10)
+        for _ in range(perceptronNumber):
+            dimensions, comments = commonUtilities.genereteRandomPerceptronParameters()
+            rawInitialPerceptron = Perceptron.constructRandomFromDimensions(dimensions, comments)
+            dumpedInitialPerceptron = ComplexJsonEncoder.dumpComplexObject(rawInitialPerceptron)
+            response = service.clientApplication.post(resource, data=dumpedInitialPerceptron, content_type=service.contentType)
+            perceptronId = int(response.data)
+            initialIds.add(perceptronId)
+        # select IDs
+        response = service.clientApplication.get(resource)
+        fetchedIds = service.loadData(response.data)
+        # check IDs
+        self.assertTrue(initialIds.issubset(fetchedIds),"ERROR : IDs selection does not match")
+        # delete all
+        service.clientApplication.delete(resource)
+        # check IDs
+        response = service.clientApplication.get(resource)
+        deletedIds = service.loadData(response.data)
+        self.assertEqual(len(deletedIds),0,"ERROR : complete deletion failed")
         pass
     pass
 pass

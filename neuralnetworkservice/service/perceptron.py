@@ -32,7 +32,12 @@ class GlobalPerceptron(Resource):
     pass
     # get all perceptrons IDs
     def get(self):
-        return {'hello': 'world'}
+        rawPerceptronIds = PerceptronDB.selectAllIds()
+        loadedPerceptronIds = service.dumpObject(rawPerceptronIds)
+        return loadedPerceptronIds
+    # delete a perceptron
+    def delete(self):
+        PerceptronDB.deleteAll()
     pass
 # specific perceptron resource
 class SpecificPerceptron(Resource):
