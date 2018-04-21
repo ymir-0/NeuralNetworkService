@@ -49,5 +49,21 @@ class SpecificPerceptron(Resource):
         loadedPerceptron = loads(dumpedPerceptron)
         # return
         return loadedPerceptron
+    # update a perceptron
+    '''
+    INFO : we request an explicit perceptron id because :
+     - we update only recorded perceptron, meaning having an ID
+     - we can overwrite a recorded perceptron from another one
+    '''
+    def put(self,perceptronId):
+        # parse parameters
+        loadedPerceptron = request.get_json()
+        # INFO : it is important to dumps to have requested string type
+        dumpedPerceptron = dumps(loadedPerceptron)
+        rawPerceptron = ComplexJsonDecoder.loadComplexObject(dumpedPerceptron)
+        # set explicit ID
+        rawPerceptron.id = perceptronId
+        # insert perceptron
+        PerceptronDB.update(rawPerceptron)
     pass
 pass

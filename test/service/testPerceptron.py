@@ -14,11 +14,8 @@ class testPerceptronWS(TestCase):
     CONTENT_TYPE = "application/json"
     # test random generation
     def testRandomGetOk(self):
-        # randomize layers numbers, dimensions & comments
-        layersNumber = randint(2,12)
-        dimensions = [randint(2,100) for _ in range(layersNumber)]
-        comments = "".join([choice(ascii_letters) for _ in range(15)])
         # get randomized perceptron
+        dimensions, comments = testPerceptronWS.genereteRandomPerceptronParameters()
         response = testPerceptronWS.APPLICATION.get("/perceptron/random",data=dumps({"dimensions": dimensions,"comments":comments}),content_type=testPerceptronWS.CONTENT_TYPE)
         dumpedPerceptron = response.data.decode()
         rawPerceptron = ComplexJsonDecoder.loadComplexObject(dumpedPerceptron)
@@ -28,9 +25,7 @@ class testPerceptronWS(TestCase):
     # test CRUD OK
     def testCrudOK(self):
         # randomize initial perceptron
-        layersNumber = randint(2,12)
-        dimensions = [randint(2,100) for _ in range(layersNumber)]
-        comments = "".join([choice(ascii_letters) for _ in range(15)])
+        dimensions, comments = testPerceptronWS.genereteRandomPerceptronParameters()
         rawInitialPerceptron = Perceptron.constructRandomFromDimensions(dimensions,comments)
         dumpedInitialPerceptron = ComplexJsonEncoder.dumpComplexObject(rawInitialPerceptron)
         # precheck
@@ -44,14 +39,32 @@ class testPerceptronWS(TestCase):
         # read perceptron
         response = testPerceptronWS.APPLICATION.get("/perceptron/"+str(perceptronId))
         dumpedPerceptron = response.data.decode()
-        rawFetchedPerceptron = ComplexJsonDecoder.loadComplexObject(dumpedPerceptron)
+        rawFetchedInsertedPerceptron = ComplexJsonDecoder.loadComplexObject(dumpedPerceptron)
         # check reading
-        self.assertEqual(rawInitialPerceptron,rawFetchedPerceptron,"ERROR : inserted perceptron does not match")
+        self.assertEqual(rawInitialPerceptron,rawFetchedInsertedPerceptron,"ERROR : inserted perceptron does not match")
+        # update perceptron
+        dimensions, comments = testPerceptronWS.genereteRandomPerceptronParameters()
+        rawNewPerceptron = Perceptron.constructRandomFromDimensions(dimensions,comments)
+        dumpedNewPerceptron = ComplexJsonEncoder.dumpComplexObject(rawNewPerceptron)
+        testPerceptronWS.APPLICATION.put("/perceptron/"+str(perceptronId),data=dumpedNewPerceptron,content_type=testPerceptronWS.CONTENT_TYPE)
+        # check update
+        response = testPerceptronWS.APPLICATION.get("/perceptron/"+str(perceptronId))
+        dumpedPerceptron = response.data.decode()
+        rawFetchedUpdatedPerceptron = ComplexJsonDecoder.loadComplexObject(dumpedPerceptron)
+        self.assertNotEqual(rawFetchedUpdatedPerceptron,rawFetchedInsertedPerceptron,"ERROR : perceptron not updated")
+        rawNewPerceptron.id = perceptronId
+        self.assertEqual(rawFetchedUpdatedPerceptron,rawNewPerceptron,"ERROR : updated perceptron does not match")
         #
         pass
     # utilities
     @classmethod
     def setUpClass(cls):
         testPerceptronWS.APPLICATION.testing = True
+    @staticmethod
+    def genereteRandomPerceptronParameters():
+        layersNumber = randint(2,12)
+        dimensions = [randint(2,100) for _ in range(layersNumber)]
+        comments = "".join([choice(ascii_letters) for _ in range(15)])
+        return dimensions, comments
     pass
 pass
