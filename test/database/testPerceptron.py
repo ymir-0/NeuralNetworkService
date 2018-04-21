@@ -4,7 +4,7 @@
 from random import randint
 from neuralnetworkcommon.perceptron import Perceptron, Layer
 from neuralnetworkservice.database.perceptron import PerceptronDB, LayerDB
-from test.database.database import TestDatabase
+from unittest import TestCase
 from test import commonUtilities
 # utilities
 def randomPerceptron():
@@ -12,7 +12,7 @@ def randomPerceptron():
     perceptron = Perceptron.constructRandomFromDimensions(dimensions, comments)
     return perceptron
 # test perceptron
-class testPerceptronDB(TestDatabase):
+class testPerceptronDB(TestCase):
     # test CRUD OK
     def testCrudOK(self):
         # initialize random perceptron

@@ -2,27 +2,29 @@
 # import
 from psycopg2 import connect
 from neuralnetworkcommon.perceptron import Perceptron, Layer
-from neuralnetworkservice.database.database import Database
+from neuralnetworkservice.database import database
 # layer
-class LayerDB(Database):
+class LayerDB():
     @staticmethod
     def insertByPerceptronIdAndDepth(perceptronId, depthIndex, layer):
         # cast arrays elements to float
         weights = [[float(__) for __ in _] for _ in layer.weights]
         biases = [float(_) for _ in layer.biases]
         # insert layer
-        statement = "INSERT INTO "+Database.SCHEMA+".LAYER (ID_PERCEPTRON,DEPTH_INDEX,WEIGHTS,BIASES) VALUES (%s,%s,%s,%s)"
+        statement = "INSERT INTO "+database.schema+".LAYER (ID_PERCEPTRON,DEPTH_INDEX,WEIGHTS,BIASES) VALUES (%s,%s,%s,%s)"
         parameters = (perceptronId,depthIndex,weights,biases,)
-        cursor = Database.CONNECTION.cursor()
+        connection = database.connectDatabase()
+        cursor = connection.cursor()
         raisedException = None
         try:
             cursor.execute(statement, parameters)
-            Database.CONNECTION.commit()
+            connection.commit()
         except Exception as exception :
-            Database.CONNECTION.rollback()
+            connection.rollback()
             raisedException = exception
         finally:
             cursor.close()
+            connection.close()
             if raisedException : raise raisedException
         pass
     @staticmethod
@@ -30,9 +32,10 @@ class LayerDB(Database):
         # initialize layers
         layers=list()
         # select all layers
-        statement = "SELECT WEIGHTS,BIASES FROM "+Database.SCHEMA+".LAYER WHERE ID_PERCEPTRON=%s ORDER BY DEPTH_INDEX ASC"
+        statement = "SELECT WEIGHTS,BIASES FROM "+database.schema+".LAYER WHERE ID_PERCEPTRON=%s ORDER BY DEPTH_INDEX ASC"
         parameters = (perceptronId,)
-        cursor = Database.CONNECTION.cursor()
+        connection = database.connectDatabase()
+        cursor = connection.cursor()
         try:
             cursor.execute(statement, parameters)
             # construct each layer
@@ -45,6 +48,7 @@ class LayerDB(Database):
                 layers.append(layer)
         finally:
             cursor.close()
+            connection.close()
         # return
         return layers
     @staticmethod
@@ -57,59 +61,65 @@ class LayerDB(Database):
     @staticmethod
     def deleteAllByPerceptronId(perceptronId):
         # delete all layers
-        statement = "DELETE FROM "+Database.SCHEMA+".LAYER WHERE ID_PERCEPTRON=%s"
+        statement = "DELETE FROM "+database.schema+".LAYER WHERE ID_PERCEPTRON=%s"
         parameters = (perceptronId,)
-        cursor = Database.CONNECTION.cursor()
+        connection = database.connectDatabase()
+        cursor = connection.cursor()
         raisedException = None
         try:
             cursor.execute(statement, parameters)
-            Database.CONNECTION.commit()
+            connection.commit()
         except Exception as exception :
-            Database.CONNECTION.rollback()
+            connection.rollback()
             raisedException = exception
         finally:
             cursor.close()
+            connection.close()
             if raisedException : raise raisedException
         pass
     @staticmethod
     def deleteAll():
         # delete all layers
-        statement = "DELETE FROM "+Database.SCHEMA+".LAYER"
-        cursor = Database.CONNECTION.cursor()
+        statement = "DELETE FROM "+database.schema+".LAYER"
+        connection = database.connectDatabase()
+        cursor = connection.cursor()
         raisedException = None
         try:
             cursor.execute(statement)
-            Database.CONNECTION.commit()
+            connection.commit()
         except Exception as exception :
-            Database.CONNECTION.rollback()
+            connection.rollback()
             raisedException = exception
         finally:
             cursor.close()
+            connection.close()
             if raisedException : raise raisedException
         pass
     pass
 # perceptron
-class PerceptronDB(Database):
+class PerceptronDB():
     # TODO : add a compensation / full rollback system if failure
     @staticmethod
     def insert(perceptron):
         # insert perceptron
-        statement = "INSERT INTO "+Database.SCHEMA+".PERCEPTRON (COMMENTS) VALUES (%s) RETURNING ID"
+        statement = "INSERT INTO "+database.schema+".PERCEPTRON (COMMENTS) VALUES (%s) RETURNING ID"
         parameters = (perceptron.comments,)
-        cursor = Database.CONNECTION.cursor()
+        connection = database.connectDatabase()
+        cursor = connection.cursor()
         raisedException = None
         try:
             cursor.execute(statement, parameters)
+            connection.commit()
             id = cursor.fetchone()[0]
             # insert each layer
             for depthIndex, layer in enumerate(perceptron.layers): LayerDB.insertByPerceptronIdAndDepth(id, depthIndex, layer)
             # commit when all is fine
-            Database.CONNECTION.commit()
         except Exception as exception :
-            Database.CONNECTION.rollback()
+            connection.rollback()
             raisedException = exception
         finally:
             cursor.close()
+            connection.close()
             if raisedException : raise raisedException
         # set perceptron id
         perceptron.id = id
@@ -117,9 +127,10 @@ class PerceptronDB(Database):
     @staticmethod
     def selectById(id):
         # select perceptron
-        statement = "SELECT COMMENTS FROM "+Database.SCHEMA+".PERCEPTRON WHERE ID=%s"
+        statement = "SELECT COMMENTS FROM "+database.schema+".PERCEPTRON WHERE ID=%s"
         parameters = (id,)
-        cursor = Database.CONNECTION.cursor()
+        connection = database.connectDatabase()
+        cursor = connection.cursor()
         try:
             cursor.execute(statement, parameters)
             attributs = cursor.fetchone()
@@ -132,73 +143,82 @@ class PerceptronDB(Database):
                 perceptron = Perceptron.constructFromAttributes(id,layers,attributs[0])
         finally:
             cursor.close()
+            connection.close()
         return perceptron
     @staticmethod
     def update(perceptron):
-        cursor = Database.CONNECTION.cursor()
+        connection = database.connectDatabase()
+        cursor = connection.cursor()
         raisedException = None
         try:
             # update all layers
             LayerDB.updateByPerceptronId(perceptron.id, perceptron.layers)
             # update perceptron
-            statement = "UPDATE "+Database.SCHEMA+".PERCEPTRON SET COMMENTS=%s WHERE ID=%s"
+            statement = "UPDATE "+database.schema+".PERCEPTRON SET COMMENTS=%s WHERE ID=%s"
             parameters = (perceptron.comments, perceptron.id,)
             cursor.execute(statement, parameters)
-            Database.CONNECTION.commit()
+            connection.commit()
         except Exception as exception :
-            Database.CONNECTION.rollback()
+            connection.rollback()
             raisedException = exception
         finally:
             cursor.close()
+            connection.close()
             if raisedException : raise raisedException
         pass
     @staticmethod
     def deleteById(perceptronId):
-        cursor = Database.CONNECTION.cursor()
+        connection = database.connectDatabase()
+        cursor = connection.cursor()
         raisedException = None
         try:
             # delete all layers
             LayerDB.deleteAllByPerceptronId(perceptronId)
             # delete all layers
-            statement = "DELETE FROM "+Database.SCHEMA+".PERCEPTRON WHERE ID=%s"
+            statement = "DELETE FROM "+database.schema+".PERCEPTRON WHERE ID=%s"
             parameters = (perceptronId,)
             cursor.execute(statement, parameters)
-            Database.CONNECTION.commit()
+            connection.commit()
         except Exception as exception:
-            Database.CONNECTION.rollback()
+            connection.rollback()
             raisedException = exception
         finally:
             cursor.close()
+            connection.close()
             if raisedException : raise raisedException
         pass
     @staticmethod
     def selectAllIds():
         # select all ids
-        statement = "SELECT ID FROM "+Database.SCHEMA+".PERCEPTRON ORDER BY ID ASC"
-        cursor = Database.CONNECTION.cursor()
+        statement = "SELECT ID FROM "+database.schema+".PERCEPTRON ORDER BY ID ASC"
+        connection = database.connectDatabase()
+        cursor = connection.cursor()
         try:
             cursor.execute(statement)
             attributs = cursor.fetchall()
         finally:
             cursor.close()
+            connection.close()
         ids = set([ _[0] for _ in attributs])
         return ids
     @staticmethod
     def deleteAll():
-        cursor = Database.CONNECTION.cursor()
+        connection = database.connectDatabase()
+        cursor = connection.cursor()
         raisedException = None
         try:
             # delete all layers
             LayerDB.deleteAll()
             # delete all perceptron
-            statement = "DELETE FROM "+Database.SCHEMA+".PERCEPTRON"
+            statement = "DELETE FROM "+database.schema+".PERCEPTRON"
             cursor.execute(statement)
-            Database.CONNECTION.commit()
+            connection.commit()
         except Exception as exception:
-            Database.CONNECTION.rollback()
+            connection.rollback()
             raisedException = exception
         finally:
             cursor.close()
+            connection.close()
             if raisedException : raise raisedException
     pass
 pass
