@@ -2,18 +2,17 @@
 # coding=utf-8
 # import
 from json import dumps
-from random import randint, choice
-from string import ascii_letters
 from pythoncommontools.jsonEncoderDecoder.complexJsonEncoderDecoder import ComplexJsonEncoder
 from neuralnetworkcommon.perceptron import Perceptron
 from test.service import service
+from test import commonUtilities
 # test perceptron
 resource = "/perceptron"
 class testPerceptronWS(service.TestService):
     # test random generation
     def testRandomGetOk(self):
         # get randomized perceptron
-        dimensions, comments = testPerceptronWS.genereteRandomPerceptronParameters()
+        dimensions, comments = commonUtilities.genereteRandomPerceptronParameters()
         response = service.clientApplication.get("/".join((resource, "random",)),data=dumps({"dimensions": dimensions,"comments":comments}),content_type=service.contentType)
         perceptron = service.loadData(response.data)
         # check perceptron
@@ -22,7 +21,7 @@ class testPerceptronWS(service.TestService):
     # test CRUD OK
     def testCrudOK(self):
         # randomize initial perceptron
-        dimensions, comments = testPerceptronWS.genereteRandomPerceptronParameters()
+        dimensions, comments = commonUtilities.genereteRandomPerceptronParameters()
         rawInitialPerceptron = Perceptron.constructRandomFromDimensions(dimensions,comments)
         dumpedInitialPerceptron = ComplexJsonEncoder.dumpComplexObject(rawInitialPerceptron)
         # precheck
@@ -40,7 +39,7 @@ class testPerceptronWS(service.TestService):
         # check reading
         self.assertEqual(rawInitialPerceptron,fetchedInsertedPerceptron,"ERROR : inserted perceptron does not match")
         # update perceptron
-        dimensions, comments = testPerceptronWS.genereteRandomPerceptronParameters()
+        dimensions, comments = commonUtilities.genereteRandomPerceptronParameters()
         rawNewPerceptron = Perceptron.constructRandomFromDimensions(dimensions,comments)
         dumpedNewPerceptron = ComplexJsonEncoder.dumpComplexObject(rawNewPerceptron)
         service.clientApplication.put(specificResource,data=dumpedNewPerceptron,content_type=service.contentType)
@@ -57,12 +56,5 @@ class testPerceptronWS(service.TestService):
         deletedPerceptron = service.loadData(response.data)
         self.assertIsNone(deletedPerceptron,"ERROR : perceptron not deleted")
         pass
-    # utilities
-    @staticmethod
-    def genereteRandomPerceptronParameters():
-        layersNumber = randint(2,12)
-        dimensions = [randint(2,100) for _ in range(layersNumber)]
-        comments = "".join([choice(ascii_letters) for _ in range(15)])
-        return dimensions, comments
     pass
 pass

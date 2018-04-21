@@ -1,17 +1,22 @@
 #!/usr/bin/env python3
 # coding=utf-8
 # import
-from random import randint, choice
-from string import ascii_letters
+from random import randint
 from neuralnetworkcommon.perceptron import Perceptron, Layer
 from neuralnetworkservice.database.perceptron import PerceptronDB, LayerDB
 from test.database.database import TestDatabase
+from test import commonUtilities
+# utilities
+def randomPerceptron():
+    dimensions, comments = commonUtilities.genereteRandomPerceptronParameters()
+    perceptron = Perceptron.constructRandomFromDimensions(dimensions, comments)
+    return perceptron
 # test perceptron
 class testPerceptronDB(TestDatabase):
     # test CRUD OK
     def testCrudOK(self):
         # initialize random perceptron
-        initialPerceptron = testPerceptronDB.randomPerceptron()
+        initialPerceptron = randomPerceptron()
         # precheck
         self.assertFalse(hasattr(initialPerceptron,"id"),"ERROR : perceptron has id")
         # call DB insert
@@ -23,7 +28,7 @@ class testPerceptronDB(TestDatabase):
         # check DB select by id
         self.assertEqual(initialPerceptron,fetchedInsertedPerceptron,"ERROR : inserted perceptron does not match")
         # call DB update
-        newPerceptron = testPerceptronDB.randomPerceptron()
+        newPerceptron = randomPerceptron()
         newPerceptron.id = initialPerceptron.id
         PerceptronDB.update(newPerceptron)
         # check DB update
@@ -42,7 +47,7 @@ class testPerceptronDB(TestDatabase):
         initialIds=set()
         perceptronNumber = randint(5, 10)
         for _ in range(perceptronNumber):
-            perceptron = testPerceptronDB.randomPerceptron()
+            perceptron = randomPerceptron()
             PerceptronDB.insert(perceptron)
             initialIds.add(perceptron.id)
             pass
@@ -93,13 +98,5 @@ class testPerceptronDB(TestDatabase):
             PerceptronDB.deleteById("")
             raise Exception("ERROR : Exception not raised")
         except Exception as exception: self.assertIsNotNone(exception,"ERROR : Exception not raised")
-    # utilities
-    @staticmethod
-    def randomPerceptron():
-        layersNumber = randint(2,12)
-        dimensions = [randint(2,100) for _ in range(layersNumber)]
-        comments = "".join([choice(ascii_letters) for _ in range(15)])
-        perceptron = Perceptron.constructRandomFromDimensions(dimensions,comments)
-        return perceptron
     pass
 pass
