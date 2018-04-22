@@ -112,7 +112,6 @@ class PerceptronDB():
             id = cursor.fetchone()[0]
             # insert each layer
             for depthIndex, layer in enumerate(perceptron.layers): LayerDB.insertByPerceptronIdAndDepth(id, depthIndex, layer)
-            # commit when all is fine
         except Exception as exception :
             connection.rollback()
             raisedException = exception
