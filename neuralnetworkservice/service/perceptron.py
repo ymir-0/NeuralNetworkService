@@ -15,20 +15,21 @@ class RandomPerceptron(Resource):
         comments = parameters["comments"]
         # generate & format random perceptron
         rawPerceptron = Perceptron.constructRandomFromDimensions(dimensions,comments)
-        loadedPerceptron = service.dumpObject(rawPerceptron)
+        jsonPerceptron = rawPerceptron.jsonMarshall()
         # return
-        return loadedPerceptron
+        return jsonPerceptron
 # global perceptron resource
 class GlobalPerceptron(Resource):
     # create a perceptron
     def post(self):
         # parse parameters
-        rawPerceptron = service.loadObject(request)
+        dictPerceptron = request.get_json()
         # insert perceptron
         response = None
         try:
-            PerceptronDB.insert(rawPerceptron)
-            response = rawPerceptron.id
+            perceptron = Perceptron.jsonUnmarshall(**dictPerceptron)
+            PerceptronDB.insert(perceptron)
+            response = perceptron.id
         except Exception as exception:
             response = service.responseError(exception)
         finally:
@@ -37,7 +38,7 @@ class GlobalPerceptron(Resource):
     # get all perceptrons IDs
     def get(self):
         rawPerceptronIds = PerceptronDB.selectAllIds()
-        loadedPerceptronIds = service.dumpObject(rawPerceptronIds)
+        loadedPerceptronIds = list(rawPerceptronIds)
         return loadedPerceptronIds
     # delete a perceptron
     def delete(self):
@@ -48,9 +49,11 @@ class SpecificPerceptron(Resource):
     # select a perceptron
     def get(self,perceptronId):
         rawPerceptron = PerceptronDB.selectById(perceptronId)
-        loadedPerceptron = service.dumpObject(rawPerceptron)
+        jsonPerceptron = None
+        if rawPerceptron:
+            jsonPerceptron = rawPerceptron.jsonMarshall()
         # return
-        return loadedPerceptron
+        return jsonPerceptron
     # update a perceptron
     '''
     INFO : we request an explicit perceptron id because :
@@ -59,13 +62,13 @@ class SpecificPerceptron(Resource):
     '''
     def put(self,perceptronId):
         # parse parameters
-        rawPerceptron = service.loadObject(request)
-        # set explicit ID
-        rawPerceptron.id = perceptronId
+        dictPerceptron = request.get_json()
         # insert perceptron
         response = None
         try:
-            PerceptronDB.update(rawPerceptron)
+            perceptron = Perceptron.jsonUnmarshall(**dictPerceptron)
+            perceptron.id = perceptronId
+            PerceptronDB.update(perceptron)
         except Exception as exception:
             response = service.responseError(exception)
         finally:
