@@ -16,11 +16,12 @@ CONFIGURATION_FILE=join(CURRENT_DIRECTORY,"..","conf","neuralnetworkservice.conf
 configurationLoader.loadConfiguration(CONFIGURATION_FILE)
 CONFIGURATION=configurationLoader.loadedConfiguration["service"]
 # initialize service
-application = Flask(CONFIGURATION["endpoint"])
+application = Flask(__name__)
 API = Api(application)
-API.add_resource(RandomPerceptron, "/perceptron/random")
-API.add_resource(GlobalPerceptron, "/perceptron")
-API.add_resource(SpecificPerceptron, "/perceptron/<int:perceptronId>")
+endpoint=CONFIGURATION["endpoint"]
+API.add_resource(RandomPerceptron, "/".join(("",endpoint,"perceptron","random",)))
+API.add_resource(GlobalPerceptron, "/".join(("",endpoint,"perceptron",)))
+API.add_resource(SpecificPerceptron, "/".join(("",endpoint,"perceptron","<int:perceptronId>",)))
 # utilities
 def dumpObject(rawObject):
     dumpedObject = ComplexJsonEncoder.dumpComplexObject(rawObject)
