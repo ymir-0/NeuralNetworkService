@@ -9,9 +9,9 @@ from neuralnetworkservice.service import service
 class RandomPerceptron(Resource):
     # TODO : delete or make optionnal the comments
     def post(self):
-        service.application.logger.info("INPUT")
         # parse parameters
         parameters = request.get_json()
+        service.application.logger.info(parameters)
         # generate & format random perceptron
         response = None
         try:
@@ -19,11 +19,11 @@ class RandomPerceptron(Resource):
             comments = parameters["comments"]
             rawPerceptron = Perceptron.constructRandomFromDimensions(dimensions,comments)
             response = rawPerceptron.jsonMarshall()
+            service.application.logger.info(response)
         except Exception as exception:
             response = service.responseError(exception)
             service.application.logger.error(exception)
         finally:
-            service.application.logger.info("OUTPUT")
             return response
 # global perceptron resource
 class GlobalPerceptron(Resource):
@@ -31,14 +31,17 @@ class GlobalPerceptron(Resource):
     def post(self):
         # parse parameters
         dictPerceptron = request.get_json()
+        service.application.logger.info(dictPerceptron)
         # insert perceptron
         response = None
         try:
             perceptron = Perceptron.jsonUnmarshall(**dictPerceptron)
             PerceptronDB.insert(perceptron)
             response = perceptron.id
+            service.application.logger.info(response)
         except Exception as exception:
             response = service.responseError(exception)
+            service.application.logger.error(exception)
         finally:
             return response
     pass
@@ -46,6 +49,7 @@ class GlobalPerceptron(Resource):
     def get(self):
         rawPerceptronIds = PerceptronDB.selectAllIds()
         loadedPerceptronIds = list(rawPerceptronIds)
+        service.application.logger.info(loadedPerceptronIds)
         return loadedPerceptronIds
     # delete a perceptron
     def delete(self):
@@ -55,11 +59,13 @@ class GlobalPerceptron(Resource):
 class SpecificPerceptron(Resource):
     # select a perceptron
     def get(self,perceptronId):
+        service.application.logger.info(perceptronId)
         rawPerceptron = PerceptronDB.selectById(perceptronId)
         jsonPerceptron = None
         if rawPerceptron:
             jsonPerceptron = rawPerceptron.jsonMarshall()
         # return
+        service.application.logger.info(jsonPerceptron)
         return jsonPerceptron
     # update a perceptron
     '''
@@ -68,21 +74,26 @@ class SpecificPerceptron(Resource):
      - we can overwrite a recorded perceptron from another one
     '''
     def put(self,perceptronId):
+        service.application.logger.info(perceptronId)
         # parse parameters
         dictPerceptron = request.get_json()
+        service.application.logger.info(dictPerceptron)
         # insert perceptron
         response = None
         try:
             perceptron = Perceptron.jsonUnmarshall(**dictPerceptron)
             perceptron.id = perceptronId
             PerceptronDB.update(perceptron)
+            service.application.logger.info(response)
         except Exception as exception:
             response = service.responseError(exception)
+            service.application.logger.error(exception)
         finally:
             return response
         pass
     # delete a perceptron
     def delete(self,perceptronId):
+        service.application.logger.info(perceptronId)
         PerceptronDB.deleteById(perceptronId)
     pass
 pass
