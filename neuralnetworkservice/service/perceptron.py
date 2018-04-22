@@ -11,13 +11,17 @@ class RandomPerceptron(Resource):
     def post(self):
         # parse parameters
         parameters = request.get_json()
-        dimensions = parameters["dimensions"]
-        comments = parameters["comments"]
         # generate & format random perceptron
-        rawPerceptron = Perceptron.constructRandomFromDimensions(dimensions,comments)
-        jsonPerceptron = rawPerceptron.jsonMarshall()
-        # return
-        return jsonPerceptron
+        response = None
+        try:
+            dimensions = parameters["dimensions"]
+            comments = parameters["comments"]
+            rawPerceptron = Perceptron.constructRandomFromDimensions(dimensions,comments)
+            response = rawPerceptron.jsonMarshall()
+        except Exception as exception:
+            response = service.responseError(exception)
+        finally:
+            return response
 # global perceptron resource
 class GlobalPerceptron(Resource):
     # create a perceptron

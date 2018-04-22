@@ -9,7 +9,7 @@ from neuralnetworkservice.service import service as nnservice
 from json import loads, dumps
 # create bad perceptron
 rawBadPerceptron = Perceptron.constructRandomFromDimensions([1, 1], "")
-rawBadPerceptron.layers[0].biases[0] = ""
+rawBadPerceptron.layers[0].weights[0][0] = ""
 jsonPerceptron = rawBadPerceptron.jsonMarshall()
 dumpedBadPerceptron = dumps(jsonPerceptron)
 # test perceptron
@@ -93,6 +93,9 @@ class testPerceptronWS(service.TestService):
         self.assertEqual(len(deletedIds),0,"ERROR : complete deletion failed")
         pass
     # test error
+    def testRandomPostError(self):
+        response = service.clientApplication.post("/".join((resource, "random",)), data=dumpedBadPerceptron, content_type=service.contentType)
+        service.checkError(self,response)
     def testPostError(self):
         response = service.clientApplication.post(resource, data=dumpedBadPerceptron, content_type=service.contentType)
         service.checkError(self,response)
