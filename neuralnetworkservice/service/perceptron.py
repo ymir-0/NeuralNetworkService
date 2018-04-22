@@ -9,7 +9,7 @@ from neuralnetworkservice.service import service
 class RandomPerceptron(Resource):
     # TODO : delete or make optionnal the comments
     def post(self):
-        service.application.logger.warning("TEST")
+        service.application.logger.info("INPUT")
         # parse parameters
         parameters = request.get_json()
         # generate & format random perceptron
@@ -21,7 +21,9 @@ class RandomPerceptron(Resource):
             response = rawPerceptron.jsonMarshall()
         except Exception as exception:
             response = service.responseError(exception)
+            service.application.logger.error(exception)
         finally:
+            service.application.logger.info("OUTPUT")
             return response
 # global perceptron resource
 class GlobalPerceptron(Resource):

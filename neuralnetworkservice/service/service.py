@@ -8,6 +8,7 @@ from os.path import join, realpath
 from neuralnetworkservice.service.perceptron import RandomPerceptron, GlobalPerceptron, SpecificPerceptron
 from flask import jsonify
 import logging
+from logging.handlers import RotatingFileHandler
 # contants
 currentDirectory = realpath(__file__).rsplit(sep, 1)[0]
 configurationFile=join(currentDirectory,"..","conf","neuralnetworkservice.conf")
@@ -22,9 +23,12 @@ API.add_resource(RandomPerceptron, "/".join(("",endpoint,"perceptron","random",)
 API.add_resource(GlobalPerceptron, "/".join(("",endpoint,"perceptron",)))
 API.add_resource(SpecificPerceptron, "/".join(("",endpoint,"perceptron","<int:perceptronId>",)))
 # set log
-handler = logging.FileHandler(configuration["http_logger"]["file"])
-handler.setLevel(configuration["http_logger"]["level"])
+formatter = logging.Formatter("[%(asctime)s] {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s")
+httpLoggerConfiguration=configuration["http_logger"]
+handler = RotatingFileHandler(httpLoggerConfiguration["file"],int(httpLoggerConfiguration["maximumSize"]),int(httpLoggerConfiguration["backupCount"]))
+handler.setFormatter(formatter)
 application.logger.addHandler(handler)
+application.logger.setLevel(configuration["http_logger"]["level"])
 log = logging.getLogger("werkzeug")
 log.setLevel(configuration["http_logger"]["level"])
 log.addHandler(handler)
