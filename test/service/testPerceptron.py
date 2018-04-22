@@ -16,10 +16,10 @@ dumpedBadPerceptron = dumps(jsonPerceptron)
 resource = "/"+nnservice.endpoint+"/perceptron"
 class testPerceptronWS(service.TestService):
     # test random generation
-    def testRandomGetOk(self):
+    def testRandomPostOk(self):
         # get randomized perceptron
         dimensions, comments = commonUtilities.genereteRandomPerceptronParameters()
-        response = service.clientApplication.get("/".join((resource, "random",)),data=dumps({"dimensions": dimensions,"comments":comments}),content_type=service.contentType)
+        response = service.clientApplication.post("/".join((resource, "random",)),data=dumps({"dimensions": dimensions,"comments":comments}),content_type=service.contentType)
         jsonPerceptron = loads(response.data)
         perceptron = Perceptron.jsonUnmarshall(**jsonPerceptron)
         # check perceptron

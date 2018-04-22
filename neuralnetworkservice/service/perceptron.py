@@ -8,7 +8,7 @@ from neuralnetworkservice.service import service
 # random perceptron resource
 class RandomPerceptron(Resource):
     # TODO : delete or make optionnal the comments
-    def get(self):
+    def post(self):
         # parse parameters
         parameters = request.get_json()
         dimensions = parameters["dimensions"]
