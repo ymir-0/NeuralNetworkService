@@ -112,6 +112,8 @@ class PerceptronDB():
             id = cursor.fetchone()[0]
             # insert each layer
             for depthIndex, layer in enumerate(perceptron.layers): LayerDB.insertByPerceptronIdAndDepth(id, depthIndex, layer)
+            # set perceptron id
+            perceptron.id = id
         except Exception as exception :
             connection.rollback()
             raisedException = exception
@@ -119,8 +121,6 @@ class PerceptronDB():
             cursor.close()
             connection.close()
             if raisedException : raise raisedException
-        # set perceptron id
-        perceptron.id = id
         pass
     @staticmethod
     def selectById(id):
