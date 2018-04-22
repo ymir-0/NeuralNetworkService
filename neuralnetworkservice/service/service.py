@@ -8,7 +8,7 @@ from os.path import join, realpath
 from neuralnetworkservice.service.perceptron import RandomPerceptron, GlobalPerceptron, SpecificPerceptron
 from pythoncommontools.jsonEncoderDecoder.complexJsonEncoderDecoder import ComplexJsonEncoder, ComplexJsonDecoder
 from json import loads, dumps
-from flask import request, jsonify
+from flask import jsonify
 # contants
 CURRENT_DIRECTORY = realpath(__file__).rsplit(sep, 1)[0]
 CONFIGURATION_FILE=join(CURRENT_DIRECTORY,"..","conf","neuralnetworkservice.conf")
