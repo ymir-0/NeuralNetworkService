@@ -9,6 +9,7 @@ from neuralnetworkservice.service import service
 class RandomPerceptron(Resource):
     # TODO : delete or make optionnal the comments
     def post(self):
+        service.application.logger.warning("TEST")
         # parse parameters
         parameters = request.get_json()
         # generate & format random perceptron
