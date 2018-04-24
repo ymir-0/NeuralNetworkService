@@ -7,6 +7,7 @@ from neuralnetworkservice.database.trainingSet import TrainingSetDB
 from unittest import TestCase
 from test import commonUtilities
 from string import ascii_letters
+from random import randint
 # utilities
 def randomTrainingSet():
     trainingElements, comments = commonUtilities.genereteTrainingSetParameters()
@@ -42,6 +43,26 @@ class testTrainingSetDB(TestCase):
         # check DB delete
         deletedTrainingSet = TrainingSetDB.selectById(initialTrainingSet.id)
         self.assertIsNone(deletedTrainingSet,"ERROR : trainingSet not deleted")
+        pass
+    # test select/delete all OK
+    def testSelectDeleteAll(self):
+        # initialize random training sets
+        initialIds=set()
+        trainingSetNumber = randint(5, 10)
+        for _ in range(trainingSetNumber):
+            trainingSet = randomTrainingSet()
+            TrainingSetDB.insert(trainingSet)
+            initialIds.add(trainingSet.id)
+            pass
+        # select IDs
+        fetchedIds = TrainingSetDB.selectAllIds()
+        # check IDs
+        self.assertTrue(initialIds.issubset(fetchedIds),"ERROR : IDs selection does not match")
+        # delete all
+        TrainingSetDB.deleteAll()
+        # check IDs
+        deletedIds = TrainingSetDB.selectAllIds()
+        self.assertEqual(len(deletedIds),0,"ERROR : complete deletion failed")
         pass
     pass
 pass
