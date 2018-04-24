@@ -87,4 +87,3 @@ class testTrainingSetDB(TestCase):
         except Exception as exception: self.assertIsNotNone(exception,"ERROR : Exception not raised")
     pass
 pass
-
