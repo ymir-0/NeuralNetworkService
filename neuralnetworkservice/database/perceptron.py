@@ -4,13 +4,14 @@ from neuralnetworkcommon.perceptron import Perceptron, Layer
 from neuralnetworkservice.database import database
 # layer
 class LayerDB():
+    TABLE=database.schema+".LAYER"
     @staticmethod
     def insertByPerceptronIdAndDepth(perceptronId, depthIndex, layer):
         # cast arrays elements to float
         weights = [[float(__) for __ in _] for _ in layer.weights]
         biases = [float(_) for _ in layer.biases]
         # insert layer
-        statement = "INSERT INTO "+database.schema+".LAYER (ID_PERCEPTRON,DEPTH_INDEX,WEIGHTS,BIASES) VALUES (%s,%s,%s,%s)"
+        statement = "INSERT INTO "+LayerDB.TABLE+" (ID_PERCEPTRON,DEPTH_INDEX,WEIGHTS,BIASES) VALUES (%s,%s,%s,%s)"
         parameters = (perceptronId,depthIndex,weights,biases,)
         connection = database.connectDatabase()
         cursor = connection.cursor()
@@ -31,7 +32,7 @@ class LayerDB():
         # initialize layers
         layers=list()
         # select all layers
-        statement = "SELECT WEIGHTS,BIASES FROM "+database.schema+".LAYER WHERE ID_PERCEPTRON=%s ORDER BY DEPTH_INDEX ASC"
+        statement = "SELECT WEIGHTS,BIASES FROM "+LayerDB.TABLE+" WHERE ID_PERCEPTRON=%s ORDER BY DEPTH_INDEX ASC"
         parameters = (perceptronId,)
         connection = database.connectDatabase()
         cursor = connection.cursor()
@@ -60,7 +61,7 @@ class LayerDB():
     @staticmethod
     def deleteAllByPerceptronId(perceptronId):
         # delete all layers
-        statement = "DELETE FROM "+database.schema+".LAYER WHERE ID_PERCEPTRON=%s"
+        statement = "DELETE FROM "+LayerDB.TABLE+" WHERE ID_PERCEPTRON=%s"
         parameters = (perceptronId,)
         connection = database.connectDatabase()
         cursor = connection.cursor()
@@ -79,7 +80,7 @@ class LayerDB():
     @staticmethod
     def deleteAll():
         # delete all layers
-        statement = "DELETE FROM "+database.schema+".LAYER"
+        statement = "DELETE FROM "+LayerDB.TABLE+""
         connection = database.connectDatabase()
         cursor = connection.cursor()
         raisedException = None
@@ -97,11 +98,11 @@ class LayerDB():
     pass
 # perceptron
 class PerceptronDB():
-    # TODO : add a compensation / full rollback system if failure
+    TABLE=database.schema+".PERCEPTRON"
     @staticmethod
     def insert(perceptron):
         # insert perceptron
-        statement = "INSERT INTO "+database.schema+".PERCEPTRON (COMMENTS) VALUES (%s) RETURNING ID"
+        statement = "INSERT INTO "+PerceptronDB.TABLE+" (COMMENTS) VALUES (%s) RETURNING ID"
         parameters = (perceptron.comments,)
         connection = database.connectDatabase()
         cursor = connection.cursor()
@@ -125,7 +126,7 @@ class PerceptronDB():
     @staticmethod
     def selectById(id):
         # select perceptron
-        statement = "SELECT COMMENTS FROM "+database.schema+".PERCEPTRON WHERE ID=%s"
+        statement = "SELECT COMMENTS FROM "+PerceptronDB.TABLE+" WHERE ID=%s"
         parameters = (id,)
         connection = database.connectDatabase()
         cursor = connection.cursor()
@@ -152,7 +153,7 @@ class PerceptronDB():
             # update all layers
             LayerDB.updateByPerceptronId(perceptron.id, perceptron.layers)
             # update perceptron
-            statement = "UPDATE "+database.schema+".PERCEPTRON SET COMMENTS=%s WHERE ID=%s"
+            statement = "UPDATE "+PerceptronDB.TABLE+" SET COMMENTS=%s WHERE ID=%s"
             parameters = (perceptron.comments, perceptron.id,)
             cursor.execute(statement, parameters)
             connection.commit()
@@ -173,7 +174,7 @@ class PerceptronDB():
             # delete all layers
             LayerDB.deleteAllByPerceptronId(perceptronId)
             # delete all layers
-            statement = "DELETE FROM "+database.schema+".PERCEPTRON WHERE ID=%s"
+            statement = "DELETE FROM "+PerceptronDB.TABLE+" WHERE ID=%s"
             parameters = (perceptronId,)
             cursor.execute(statement, parameters)
             connection.commit()
@@ -188,7 +189,7 @@ class PerceptronDB():
     @staticmethod
     def selectAllIds():
         # select all ids
-        statement = "SELECT ID FROM "+database.schema+".PERCEPTRON ORDER BY ID ASC"
+        statement = "SELECT ID FROM "+PerceptronDB.TABLE+" ORDER BY ID ASC"
         connection = database.connectDatabase()
         cursor = connection.cursor()
         try:
@@ -208,7 +209,7 @@ class PerceptronDB():
             # delete all layers
             LayerDB.deleteAll()
             # delete all perceptron
-            statement = "DELETE FROM "+database.schema+".PERCEPTRON"
+            statement = "DELETE FROM "+PerceptronDB.TABLE
             cursor.execute(statement)
             connection.commit()
         except Exception as exception:

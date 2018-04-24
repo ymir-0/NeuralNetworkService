@@ -4,11 +4,11 @@ from neuralnetworkservice.database import database
 from neuralnetworkcommon.trainingSet import mergeData, TrainingSet
 # training set
 class TrainingSetDB():
-    # TODO : add a compensation / full rollback system if failure
+    TABLE=database.schema+".TRAINING_SET"
     @staticmethod
     def insert(trainingSet):
         # insert trainingSet
-        statement = "INSERT INTO "+database.schema+".TRAINING_SET (INPUTS,EXPECTED_OUTPUTS,COMMENTS) VALUES (%s,%s,%s) RETURNING ID"
+        statement = "INSERT INTO "+TrainingSetDB.TABLE+" (INPUTS,EXPECTED_OUTPUTS,COMMENTS) VALUES (%s,%s,%s) RETURNING ID"
         inputs, expectedOutputs = trainingSet.separateData()
         parameters = (inputs, expectedOutputs, trainingSet.comments,)
         connection = database.connectDatabase()
@@ -30,7 +30,7 @@ class TrainingSetDB():
     @staticmethod
     def selectById(id):
         # select perceptron
-        statement = "SELECT INPUTS,EXPECTED_OUTPUTS,COMMENTS FROM "+database.schema+".TRAINING_SET WHERE ID=%s"
+        statement = "SELECT INPUTS,EXPECTED_OUTPUTS,COMMENTS FROM "+TrainingSetDB.TABLE+" WHERE ID=%s"
         parameters = (id,)
         connection = database.connectDatabase()
         cursor = connection.cursor()
@@ -51,7 +51,7 @@ class TrainingSetDB():
     @staticmethod
     def update(trainingSet):
         # insert trainingSet
-        statement = "UPDATE "+database.schema+".TRAINING_SET SET INPUTS=%s,EXPECTED_OUTPUTS=%s,COMMENTS=%s WHERE ID=%s"
+        statement = "UPDATE "+TrainingSetDB.TABLE+" SET INPUTS=%s,EXPECTED_OUTPUTS=%s,COMMENTS=%s WHERE ID=%s"
         inputs, expectedOutputs = trainingSet.separateData()
         parameters = (inputs, expectedOutputs, trainingSet.comments, trainingSet.id,)
         connection = database.connectDatabase()
@@ -75,7 +75,7 @@ class TrainingSetDB():
         raisedException = None
         try:
             # delete all layers
-            statement = "DELETE FROM "+database.schema+".TRAINING_SET WHERE ID=%s"
+            statement = "DELETE FROM "+TrainingSetDB.TABLE+" WHERE ID=%s"
             parameters = (id,)
             cursor.execute(statement, parameters)
             connection.commit()
@@ -90,7 +90,7 @@ class TrainingSetDB():
     @staticmethod
     def selectAllIds():
         # select all ids
-        statement = "SELECT ID FROM "+database.schema+".TRAINING_SET ORDER BY ID ASC"
+        statement = "SELECT ID FROM "+TrainingSetDB.TABLE+" ORDER BY ID ASC"
         connection = database.connectDatabase()
         cursor = connection.cursor()
         try:
@@ -108,7 +108,7 @@ class TrainingSetDB():
         raisedException = None
         try:
             # delete all perceptron
-            statement = "DELETE FROM "+database.schema+".TRAINING_SET"
+            statement = "DELETE FROM "+TrainingSetDB.TABLE
             cursor.execute(statement)
             connection.commit()
         except Exception as exception:
