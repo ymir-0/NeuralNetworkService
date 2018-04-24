@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # coding=utf-8
 # import
-from random import randint, choice
-from neuralnetworkcommon.perceptron import TrainingSet
+from random import choice
+from neuralnetworkcommon.trainingSet import TrainingSet
 from neuralnetworkservice.database.trainingSet import TrainingSetDB
 from unittest import TestCase
 from test import commonUtilities
@@ -25,6 +25,11 @@ class testTrainingSetDB(TestCase):
         TrainingSetDB.insert(initialTrainingSet)
         # check DB insert
         self.assertIsNotNone(initialTrainingSet.id,"ERROR : trainingSet has no id")
+        # call DB select by id
+        fetchedInsertedTrainingSet = TrainingSetDB.selectById(initialTrainingSet.id)
+        # check DB select by id
+        self.assertEqual(initialTrainingSet,fetchedInsertedTrainingSet,"ERROR : inserted trainingSet does not match")
+        # call DB update
         pass
     pass
 pass

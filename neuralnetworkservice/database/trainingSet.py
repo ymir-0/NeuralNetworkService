@@ -1,7 +1,7 @@
 # coding=utf-8
 # import
-from neuralnetworkcommon.perceptron import TrainingElement
 from neuralnetworkservice.database import database
+from neuralnetworkcommon.trainingSet import mergeData, TrainingSet
 # training set
 class TrainingSetDB():
     # TODO : add a compensation / full rollback system if failure
@@ -27,6 +27,28 @@ class TrainingSetDB():
             connection.close()
             if raisedException : raise raisedException
         pass
+    @staticmethod
+    def selectById(id):
+        # select perceptron
+        statement = "SELECT INPUTS,EXPECTED_OUTPUTS,COMMENTS FROM "+database.schema+".TRAINING_SET WHERE ID=%s"
+        parameters = (id,)
+        connection = database.connectDatabase()
+        cursor = connection.cursor()
+        try:
+            cursor.execute(statement, parameters)
+            attributs = cursor.fetchone()
+            # convert from decimal to float
+            inputs = [[float(__) for __ in _] for _ in attributs[0]]
+            expectedOutput = [[float(__) for __ in _] for _ in attributs[1]]
+            # create training set if need
+            trainingSet = None
+            if attributs:
+                trainingElements = mergeData(inputs,expectedOutput)
+                trainingSet = TrainingSet.constructFromAttributes(id, trainingElements, attributs[2])
+        finally:
+            cursor.close()
+            connection.close()
+        return trainingSet
     pass
 pass
 

@@ -2,7 +2,7 @@
 # import
 from random import random, randint, choice
 from string import ascii_letters
-from neuralnetworkcommon.perceptron import TrainingElement, TrainingSet
+from neuralnetworkcommon.trainingSet import TrainingElement
 # test utilities
 # INFO : those utilities are not merged with common neural network one because test modules are not deployed in libraries
 def genereteRandomPerceptronParameters():
