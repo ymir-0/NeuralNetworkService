@@ -33,7 +33,7 @@ class testPerceptronWS(service.TestService):
         jsonPerceptron = rawInitialPerceptron.jsonMarshall()
         dumpedInitialPerceptron = dumps(jsonPerceptron)
         # precheck
-        self.assertFalse(hasattr(dumpedInitialPerceptron,"id"),"ERROR : perceptron has id")
+        self.assertFalse(hasattr(rawInitialPerceptron,"id"),"ERROR : perceptron has id")
         # create perceptron
         response = service.clientApplication.post(resource,data=dumpedInitialPerceptron,content_type=service.contentType)
         perceptronId = int(response.data)
