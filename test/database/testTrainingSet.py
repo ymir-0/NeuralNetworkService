@@ -30,6 +30,14 @@ class testTrainingSetDB(TestCase):
         # check DB select by id
         self.assertEqual(initialTrainingSet,fetchedInsertedTrainingSet,"ERROR : inserted trainingSet does not match")
         # call DB update
+        newTrainingSet = randomTrainingSet()
+        newTrainingSet.id = initialTrainingSet.id
+        TrainingSetDB.update(newTrainingSet)
+        # check DB update
+        fetchedUpdatedTrainingSet = TrainingSetDB.selectById(initialTrainingSet.id)
+        self.assertNotEqual(fetchedUpdatedTrainingSet,fetchedInsertedTrainingSet,"ERROR : trainingSet not updated")
+        self.assertEqual(fetchedUpdatedTrainingSet,newTrainingSet,"ERROR : updated trainingSet does not match")
+        # call DB delete
         pass
     pass
 pass

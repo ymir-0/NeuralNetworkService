@@ -50,5 +50,26 @@ class TrainingSetDB():
             connection.close()
         return trainingSet
     pass
+    @staticmethod
+    def update(trainingSet):
+        # insert trainingSet
+        statement = "UPDATE "+database.schema+".TRAINING_SET SET INPUTS=%s,EXPECTED_OUTPUTS=%s,COMMENTS=%s WHERE ID=%s"
+        inputs, expectedOutputs = trainingSet.separateData()
+        parameters = (inputs, expectedOutputs, trainingSet.comments, trainingSet.id,)
+        connection = database.connectDatabase()
+        cursor = connection.cursor()
+        raisedException = None
+        try:
+            cursor.execute(statement, parameters)
+            connection.commit()
+        except Exception as exception :
+            connection.rollback()
+            raisedException = exception
+        finally:
+            cursor.close()
+            connection.close()
+            if raisedException : raise raisedException
+        pass
+    pass
 pass
 
