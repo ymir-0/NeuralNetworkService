@@ -99,7 +99,7 @@ class TrainingSetDB():
         finally:
             cursor.close()
             connection.close()
-        ids = set([ _[0] for _ in attributs])
+        ids = [ _[0] for _ in attributs]
         return ids
     @staticmethod
     def deleteAll():

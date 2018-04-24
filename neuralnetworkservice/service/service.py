@@ -6,6 +6,7 @@ from pythoncommontools.configurationLoader import configurationLoader
 from os import sep
 from os.path import join, realpath
 from neuralnetworkservice.service.perceptron import RandomPerceptron, GlobalPerceptron, SpecificPerceptron
+from neuralnetworkservice.service.trainingSet import GlobalTrainingSet, SpecificTrainingSet
 from flask import jsonify
 import logging
 from logging.handlers import RotatingFileHandler
@@ -22,6 +23,8 @@ endpoint=configuration["service"]["endpoint"]
 API.add_resource(RandomPerceptron, "/".join(("",endpoint,"perceptron","random",)))
 API.add_resource(GlobalPerceptron, "/".join(("",endpoint,"perceptron",)))
 API.add_resource(SpecificPerceptron, "/".join(("",endpoint,"perceptron","<int:perceptronId>",)))
+API.add_resource(GlobalTrainingSet, "/".join(("",endpoint,"trainingSet",)))
+API.add_resource(SpecificTrainingSet, "/".join(("",endpoint,"trainingSet","<int:trainingSetId>",)))
 # set log
 formatter = logging.Formatter("[%(asctime)s] {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s")
 httpLoggerConfiguration=configuration["http_logger"]
