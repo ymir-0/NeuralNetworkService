@@ -38,6 +38,10 @@ class testTrainingSetDB(TestCase):
         self.assertNotEqual(fetchedUpdatedTrainingSet,fetchedInsertedTrainingSet,"ERROR : trainingSet not updated")
         self.assertEqual(fetchedUpdatedTrainingSet,newTrainingSet,"ERROR : updated trainingSet does not match")
         # call DB delete
+        TrainingSetDB.deleteById(initialTrainingSet.id)
+        # check DB delete
+        deletedTrainingSet = TrainingSetDB.selectById(initialTrainingSet.id)
+        self.assertIsNone(deletedTrainingSet,"ERROR : trainingSet not deleted")
         pass
     pass
 pass
