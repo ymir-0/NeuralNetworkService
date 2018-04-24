@@ -64,6 +64,27 @@ class testTrainingSetDB(TestCase):
         deletedIds = TrainingSetDB.selectAllIds()
         self.assertEqual(len(deletedIds),0,"ERROR : complete deletion failed")
         pass
+    # test perceptron error
+    def testTrainingSetInsertError(self):
+        try:
+            TrainingSetDB.insert("")
+            raise Exception("ERROR : Exception not raised")
+        except Exception as exception: self.assertIsNotNone(exception,"ERROR : Exception not raised")
+    def testTrainingSetSelectByIdError(self):
+        try:
+            TrainingSetDB.selectById("")
+            raise Exception("ERROR : Exception not raised")
+        except Exception as exception: self.assertIsNotNone(exception,"ERROR : Exception not raised")
+    def testTrainingSetUpdateError(self):
+        try:
+            TrainingSetDB.update("")
+            raise Exception("ERROR : Exception not raised")
+        except Exception as exception: self.assertIsNotNone(exception,"ERROR : Exception not raised")
+    def testTrainingSetDeleteByIdError(self):
+        try:
+            TrainingSetDB.deleteById("")
+            raise Exception("ERROR : Exception not raised")
+        except Exception as exception: self.assertIsNotNone(exception,"ERROR : Exception not raised")
     pass
 pass
 
