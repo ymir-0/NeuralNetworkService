@@ -23,8 +23,8 @@ endpoint=configuration["service"]["endpoint"]
 API.add_resource(RandomPerceptron, "/".join(("",endpoint,"perceptron","random",)))
 API.add_resource(GlobalPerceptron, "/".join(("",endpoint,"perceptron",)))
 API.add_resource(SpecificPerceptron, "/".join(("",endpoint,"perceptron","<int:perceptronId>",)))
-API.add_resource(GlobalTrainingSet, "/".join(("",endpoint,"trainingSet",)))
-API.add_resource(SpecificTrainingSet, "/".join(("",endpoint,"trainingSet","<int:trainingSetId>",)))
+API.add_resource(GlobalTrainingSet, "/".join(("",endpoint,"trainingset",)))
+API.add_resource(SpecificTrainingSet, "/".join(("",endpoint,"trainingset","<int:trainingSetId>",)))
 # set log
 formatter = logging.Formatter("[%(asctime)s] {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s")
 httpLoggerConfiguration=configuration["http_logger"]

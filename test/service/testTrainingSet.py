@@ -13,7 +13,7 @@ rawBadTrainingSet = TrainingSet.constructFromAttributes(None,[badTrainingElement
 jsonTrainingSet = rawBadTrainingSet.jsonMarshall()
 dumpedBadTrainingSet = dumps(jsonTrainingSet)
 # test training set
-resource = "/"+nnservice.endpoint+"/trainingSet"
+resource = "/"+nnservice.endpoint+"/trainingset"
 class testTrainingSetWS(service.TestService):
     # test CRUD OK
     def testCrudOK(self):
