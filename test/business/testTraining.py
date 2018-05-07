@@ -7,6 +7,18 @@ from random import random, randint
 from neuralnetworkservice.business.training import Trainer
 # test trainer
 class testPerceptronDB(TestCase):
+    def testCheckTraining(self):
+        # randomize perceptron and training set
+        perceptron = commonUtilities.randomPerceptron()
+        inputDimension = len(perceptron.layers[0].weights[0])
+        outputDimension = len(perceptron.layers[-1].weights)
+        trainingSize = randint(15, 95)
+        trainingSubSet = commonUtilities.randomTrainingSet(inputDimension, outputDimension, trainingSize)
+        # sequence outputs
+        # check training
+        trainer = Trainer(perceptron,commonUtilities.randomTrainingSet(),0)
+        outputErrorCounter = trainer.checkTraining(trainingSubSet.trainingElements)
+        pass
     def testPassForwardBackwardSequence(self):
         # randomize perceptron and training set
         perceptron = commonUtilities.randomPerceptron()
@@ -16,7 +28,7 @@ class testPerceptronDB(TestCase):
         trainingSubSet = commonUtilities.randomTrainingSet(inputDimension, outputDimension, trainingSize)
         # test pass forward/backward
         trainer = Trainer(perceptron,commonUtilities.randomTrainingSet(),0)
-        errors = trainer.passForwardBackwardSequence(trainingSubSet)
+        errors = trainer.passForwardBackwardSequence(trainingSubSet.trainingElements)
         # check pass forward/backward
         self.assertEqual(len(errors),trainingSize, "ERROR : pass forward/back for subsequence does not match")
         pass

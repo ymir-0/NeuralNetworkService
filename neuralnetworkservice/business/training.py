@@ -4,11 +4,10 @@ from random import shuffle
 # trainer
 class Trainer():
     # training
-    def passForwardBackwardSequence(self,trainingSubSet):
+    def passForwardBackwardSequence(self,trainingElements):
         # initialize errors
         errors = list()
         # INFO : randomize to be sure we do not train following the same path
-        trainingElements = trainingSubSet.trainingElements
         shuffle(trainingElements)
         # run forward & backward for each training input / expected output
         for trainingElement in trainingElements:
@@ -16,7 +15,24 @@ class Trainer():
             errors.append(error)
         # return
         return errors
-        pass
+    # TODO : create others check methods (not only match maximum element)
+    def checkTraining(self,trainingElements):
+        # initialize errors
+        outputErrorCounter = 0
+        # run forward & backward for each training input / expected output
+        for trainingElement in trainingElements:
+            expectedOutput = trainingElement.expectedOutput
+            maximumExpectedValue = max(expectedOutput)
+            expectedIndex = expectedOutput.index(maximumExpectedValue)
+            actualOutput = self.perceptron.passForward(trainingElement.input)
+            actualOutput = [float(_) for _ in actualOutput]
+            maximumActualValue = max(actualOutput)
+            actualIndex = actualOutput.index(maximumActualValue)
+            outputError = expectedIndex==actualIndex
+            if outputError: outputErrorCounter+=1
+        # return
+        return outputErrorCounter
+    pass
     #constructors
     # INFO : test ration between 0 (no data used to test, all for training) and 1 (no data used to training, all for test)
     def __init__(self, perceptron,dataSet,testRatio):
