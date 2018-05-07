@@ -2,23 +2,17 @@
 # coding=utf-8
 # import
 from random import choice
-from neuralnetworkcommon.trainingSet import TrainingSet
 from neuralnetworkservice.database.trainingSet import TrainingSetDB
 from unittest import TestCase
 from test import commonUtilities
 from string import ascii_letters
 from random import randint
-# utilities
-def randomTrainingSet():
-    trainingElements, comments = commonUtilities.genereteTrainingSetParameters()
-    trainingSet = TrainingSet.constructFromAttributes(None, trainingElements, comments)
-    return trainingSet
 # test training set
 class testTrainingSetDB(TestCase):
     # test CRUD OK
     def testCrudOK(self):
         # initialize random trainingSet
-        initialTrainingSet = randomTrainingSet()
+        initialTrainingSet = commonUtilities.randomTrainingSet()
         # precheck
         self.assertIsNone(initialTrainingSet.id,"ERROR : trainingSet has id")
         # call DB insert
@@ -31,7 +25,7 @@ class testTrainingSetDB(TestCase):
         # check DB select by id
         self.assertEqual(initialTrainingSet,fetchedInsertedTrainingSet,"ERROR : inserted trainingSet does not match")
         # call DB update
-        newTrainingSet = randomTrainingSet()
+        newTrainingSet = commonUtilities.randomTrainingSet()
         newTrainingSet.id = initialTrainingSet.id
         TrainingSetDB.update(newTrainingSet)
         # check DB update
@@ -50,7 +44,7 @@ class testTrainingSetDB(TestCase):
         initialIds=set()
         trainingSetNumber = randint(5, 10)
         for _ in range(trainingSetNumber):
-            trainingSet = randomTrainingSet()
+            trainingSet = commonUtilities.randomTrainingSet()
             TrainingSetDB.insert(trainingSet)
             initialIds.add(trainingSet.id)
             pass

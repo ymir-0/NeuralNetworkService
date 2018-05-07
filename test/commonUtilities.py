@@ -2,7 +2,8 @@
 # import
 from random import random, randint, choice
 from string import ascii_letters
-from neuralnetworkcommon.trainingSet import TrainingElement
+from neuralnetworkcommon.trainingSet import TrainingElement, TrainingSet
+from neuralnetworkcommon.perceptron import Perceptron
 # test utilities
 # INFO : those utilities are not merged with common neural network one because test modules are not deployed in libraries
 def genereteRandomPerceptronParameters():
@@ -10,7 +11,10 @@ def genereteRandomPerceptronParameters():
     dimensions = [randint(2, 100) for _ in range(layersNumber)]
     comments = "".join([choice(ascii_letters) for _ in range(15)])
     return dimensions, comments
-pass
+def randomPerceptron():
+    dimensions, comments = genereteRandomPerceptronParameters()
+    perceptron = Perceptron.constructRandomFromDimensions(dimensions, comments)
+    return perceptron
 def genereteTrainingSetParameters():
     # generate training elements
     trainingElements = list()
@@ -24,4 +28,8 @@ def genereteTrainingSetParameters():
     comments = "".join([choice(ascii_letters) for _ in range(15)])
     # return
     return trainingElements, comments
+def randomTrainingSet():
+    trainingElements, comments = genereteTrainingSetParameters()
+    trainingSet = TrainingSet.constructFromAttributes(None, trainingElements, comments)
+    return trainingSet
 pass

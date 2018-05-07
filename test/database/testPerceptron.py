@@ -2,21 +2,16 @@
 # coding=utf-8
 # import
 from random import randint
-from neuralnetworkcommon.perceptron import Perceptron, Layer
+from neuralnetworkcommon.perceptron import Layer
 from neuralnetworkservice.database.perceptron import PerceptronDB, LayerDB
 from unittest import TestCase
 from test import commonUtilities
-# utilities
-def randomPerceptron():
-    dimensions, comments = commonUtilities.genereteRandomPerceptronParameters()
-    perceptron = Perceptron.constructRandomFromDimensions(dimensions, comments)
-    return perceptron
 # test perceptron
 class testPerceptronDB(TestCase):
     # test CRUD OK
     def testCrudOK(self):
         # initialize random perceptron
-        initialPerceptron = randomPerceptron()
+        initialPerceptron = commonUtilities.randomPerceptron()
         # precheck
         self.assertFalse(hasattr(initialPerceptron,"id"),"ERROR : perceptron has id")
         # call DB insert
@@ -28,7 +23,7 @@ class testPerceptronDB(TestCase):
         # check DB select by id
         self.assertEqual(initialPerceptron,fetchedInsertedPerceptron,"ERROR : inserted perceptron does not match")
         # call DB update
-        newPerceptron = randomPerceptron()
+        newPerceptron = commonUtilities.randomPerceptron()
         newPerceptron.id = initialPerceptron.id
         PerceptronDB.update(newPerceptron)
         # check DB update
@@ -47,7 +42,7 @@ class testPerceptronDB(TestCase):
         initialIds=set()
         perceptronNumber = randint(5, 10)
         for _ in range(perceptronNumber):
-            perceptron = randomPerceptron()
+            perceptron = commonUtilities.randomPerceptron()
             PerceptronDB.insert(perceptron)
             initialIds.add(perceptron.id)
             pass
