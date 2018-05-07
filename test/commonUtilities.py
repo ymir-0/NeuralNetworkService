@@ -7,8 +7,8 @@ from neuralnetworkcommon.perceptron import Perceptron
 # test utilities
 # INFO : those utilities are not merged with common neural network one because test modules are not deployed in libraries
 def genereteRandomPerceptronParameters():
-    layersNumber = randint(2, 12)
-    dimensions = [randint(2, 100) for _ in range(layersNumber)]
+    layersNumber = randint(3, 12)
+    dimensions = [randint(3, 100) for _ in range(layersNumber)]
     comments = "".join([choice(ascii_letters) for _ in range(15)])
     return dimensions, comments
 def randomPerceptron():

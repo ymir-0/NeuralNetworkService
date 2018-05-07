@@ -13,11 +13,29 @@ class testPerceptronDB(TestCase):
         inputDimension = len(perceptron.layers[0].weights[0])
         outputDimension = len(perceptron.layers[-1].weights)
         trainingSize = randint(15, 95)
-        trainingSubSet = commonUtilities.randomTrainingSet(inputDimension, outputDimension, trainingSize)
-        # sequence outputs
-        # check training
+        trainingSet = commonUtilities.randomTrainingSet(inputDimension, outputDimension, trainingSize)
+        trainingElements = trainingSet.trainingElements
+        # generate errors
+        expectedErrorNumber = randint(1, trainingSize)
+        errorCounter = 0
+        for trainingElement in trainingSet.trainingElements:
+            actualOutput = perceptron.passForward(trainingElement.input)
+            actualOutput = [float(_) for _ in actualOutput]
+            # generate error (if not enought yet)
+            maximumValue = max(actualOutput)
+            maximumValueIndex = actualOutput.index(maximumValue)
+            if errorCounter < expectedErrorNumber:
+                actualOutput[maximumValueIndex] = maximumValue + 1
+                errorCounter += 1
+            else:
+                actualOutput[maximumValueIndex] = maximumValue - 1
+            trainingElement.expectedOutput = actualOutput
+            pass
+        # run training checking
         trainer = Trainer(perceptron,commonUtilities.randomTrainingSet(),0)
-        outputErrorCounter = trainer.checkTraining(trainingSubSet.trainingElements)
+        actualErrorNumber = trainer.checkTraining(trainingElements)
+        # check training checking
+        self.assertEqual(actualErrorNumber, expectedErrorNumber, "ERROR : error counter does not match")
         pass
     def testPassForwardBackwardSequence(self):
         # randomize perceptron and training set
