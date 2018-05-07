@@ -12,8 +12,7 @@ class testPerceptronDB(TestCase):
         # randomize perceptron and training set
         perceptron = commonUtilities.randomPerceptron()
         trainingSet = commonUtilities.randomTrainingSet()
-        trainingElements = trainingSet.trainingElements
-        expectedDataSet = set(trainingElements)
+        expectedDataSet = set(trainingSet.trainingElements)
         testRatio = random()
         # generate trainer
         trainer = Trainer(perceptron,trainingSet,testRatio)
