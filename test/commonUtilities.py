@@ -15,21 +15,20 @@ def randomPerceptron():
     dimensions, comments = genereteRandomPerceptronParameters()
     perceptron = Perceptron.constructRandomFromDimensions(dimensions, comments)
     return perceptron
-def genereteTrainingSetParameters():
+def genereteTrainingSetParameters(inputDimension=randint(20, 100), outputDimension=randint(20, 100), trainingSize=randint(15, 95)):
     # generate training elements
     trainingElements = list()
-    dimension = randint(20, 100)
-    for trainingSize in range(randint(15, 95)):
-        input = [(random() - .5) * 2 for _ in range(dimension)]
-        expectedOutput = [(random() - .5) * 2 for _ in range(dimension)]
+    for _ in range(trainingSize):
+        input = [(random() - .5) * 2 for _ in range(inputDimension)]
+        expectedOutput = [(random() - .5) * 2 for _ in range(outputDimension)]
         trainingElement = TrainingElement.constructFromAttributes(input,expectedOutput)
         trainingElements.append(trainingElement)
     # comments
     comments = "".join([choice(ascii_letters) for _ in range(15)])
     # return
     return trainingElements, comments
-def randomTrainingSet():
-    trainingElements, comments = genereteTrainingSetParameters()
+def randomTrainingSet(inputDimension=randint(20, 100), outputDimension=randint(20, 100), trainingSize=randint(15, 95)):
+    trainingElements, comments = genereteTrainingSetParameters(inputDimension, outputDimension, trainingSize)
     trainingSet = TrainingSet.constructFromAttributes(None, trainingElements, comments)
     return trainingSet
 pass
