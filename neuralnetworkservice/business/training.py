@@ -12,12 +12,12 @@ class Trainer():
         while not partiallyTrained:
             # train once
             differentialError = self.passForwardBackwardSequence(trainingElements)
-            outputErrorCounter = self.checkTraining(trainingElements)
+            errorElementsNumber = self.checkTraining(trainingElements)
             # fill report
             meanDifferentialError = mean(differentialError)
+            trainedElementsNumber = trainingElementsNumber - errorElementsNumber
             # check partial training
-            partiallyTrained = outputErrorCounter<trainingElementsNumber
-            if partiallyTrained: trainedElementsNumber = trainingElementsNumber-outputErrorCounter
+            partiallyTrained = errorElementsNumber<trainingElementsNumber
         return trainedElementsNumber
     pass
     # training
@@ -35,7 +35,7 @@ class Trainer():
     # TODO : create others check methods (not only match maximum element)
     def checkTraining(self,trainingElements):
         # initialize errors
-        outputErrorCounter = 0
+        errorElementsNumber = 0
         # run forward & backward for each training input / expected output
         for trainingElement in trainingElements:
             expectedOutput = trainingElement.expectedOutput
@@ -46,9 +46,9 @@ class Trainer():
             maximumActualValue = max(actualOutput)
             actualIndex = actualOutput.index(maximumActualValue)
             outputError = expectedIndex==actualIndex
-            if outputError: outputErrorCounter+=1
+            if outputError: errorElementsNumber+=1
         # return
-        return outputErrorCounter
+        return errorElementsNumber
     pass
     #constructors
     # INFO : test ration between 0 (no data used to test, all for training) and 1 (no data used to training, all for test)

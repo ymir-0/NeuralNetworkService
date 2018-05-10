@@ -1,7 +1,8 @@
 # coding=utf-8
 # import
 from neuralnetworkservice.database import database
-from neuralnetworkcommon.trainingSet import mergeData, TrainingSet
+from neuralnetworkcommon.trainingSet import TrainingSet
+from neuralnetworkcommon.utils import mergeData
 # training set
 class TrainingSetDB():
     TABLE=database.schema+".TRAINING_SET"
