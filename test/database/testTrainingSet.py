@@ -17,6 +17,7 @@ class testTrainingSetDB(TestCase):
         self.assertIsNone(initialTrainingSet.id,"ERROR : trainingSet has id")
         # call DB insert
         comments = "".join([choice(ascii_letters) for _ in range(15)])
+        initialTrainingSet.comments = comments
         TrainingSetDB.insert(initialTrainingSet)
         # check DB insert
         self.assertIsNotNone(initialTrainingSet.id,"ERROR : trainingSet has no id")
