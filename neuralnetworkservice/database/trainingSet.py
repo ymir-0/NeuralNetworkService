@@ -50,6 +50,7 @@ class TrainingSetDB():
         return trainingSet
     @staticmethod
     def update(trainingSet):
+        # TODO : manage training session impact when updating inputs / 'expected outputs'
         # insert trainingSet
         statement = "UPDATE "+TrainingSetDB.TABLE+" SET INPUTS=%s,EXPECTED_OUTPUTS=%s,COMMENTS=%s WHERE ID=%s"
         inputs, expectedOutputs = trainingSet.separateData()
