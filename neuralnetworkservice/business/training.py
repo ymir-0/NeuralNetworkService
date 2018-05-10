@@ -1,20 +1,37 @@
 # coding=utf-8
 # import
+from numpy import mean
 from random import shuffle
 # trainer
 class Trainer():
+    def trainSubSequence(self,trainingElements):
+        # initialize training context
+        partiallyTrained = False
+        trainingElementsNumber = len(trainingElements)
+        # train as many as necessary
+        while not partiallyTrained:
+            # train once
+            errorDifferential = self.passForwardBackwardSequence(trainingElements)
+            outputErrorCounter = self.checkTraining(trainingElements)
+            # fill report
+            meanErrorDifferential = mean(errorDifferential)
+            # check partial training
+            partiallyTrained = outputErrorCounter<trainingElementsNumber
+            if partiallyTrained: trainedElementsNumber = trainingElementsNumber-outputErrorCounter
+        return trainedElementsNumber
+    pass
     # training
     def passForwardBackwardSequence(self,trainingElements):
         # initialize errors
-        errors = list()
+        errorDifferential = list()
         # INFO : randomize to be sure we do not train following the same path
         shuffle(trainingElements)
         # run forward & backward for each training input / expected output
         for trainingElement in trainingElements:
             error = self.perceptron.passForwardBackward(trainingElement.input, trainingElement.expectedOutput)
-            errors.append(error)
+            errorDifferential.append(error)
         # return
-        return errors
+        return errorDifferential
     # TODO : create others check methods (not only match maximum element)
     def checkTraining(self,trainingElements):
         # initialize errors

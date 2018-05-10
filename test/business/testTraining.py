@@ -7,6 +7,21 @@ from random import random, randint
 from neuralnetworkservice.business.training import Trainer
 # test trainer
 class testPerceptronDB(TestCase):
+    def testTrainSubSequence(self):
+        # randomize perceptron and training set
+        perceptron = commonUtilities.randomPerceptron()
+        inputDimension = len(perceptron.layers[0].weights[0])
+        outputDimension = len(perceptron.layers[-1].weights)
+        trainingSize = randint(10, 15)
+        trainingSet = commonUtilities.randomTrainingSet(inputDimension, outputDimension, trainingSize)
+        trainingElements = trainingSet.trainingElements
+        # train subsequence
+        trainer = Trainer(perceptron,commonUtilities.randomTrainingSet(),0)
+        trainedElementsNumber = trainer.trainSubSequence(trainingElements)
+        # check training
+        self.assertGreater(trainedElementsNumber, 0, "ERROR : negative trained elements number")
+        self.assertLessEqual(trainedElementsNumber, len(trainingElements), "ERROR : trained elements number greater than training set")
+        pass
     def testCheckTraining(self):
         # randomize perceptron and training set
         perceptron = commonUtilities.randomPerceptron()
