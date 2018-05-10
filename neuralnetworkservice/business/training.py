@@ -52,6 +52,7 @@ class Trainer():
     pass
     #constructors
     # INFO : test ration between 0 (no data used to test, all for training) and 1 (no data used to training, all for test)
+    # TODO : replace splitting data set with test ratio with direct training set
     def __init__(self, perceptron,dataSet,testRatio):
         # set perceptron
         self.perceptron = perceptron
