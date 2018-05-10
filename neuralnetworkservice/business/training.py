@@ -11,10 +11,10 @@ class Trainer():
         # train as many as necessary
         while not partiallyTrained:
             # train once
-            errorDifferential = self.passForwardBackwardSequence(trainingElements)
+            differentialError = self.passForwardBackwardSequence(trainingElements)
             outputErrorCounter = self.checkTraining(trainingElements)
             # fill report
-            meanErrorDifferential = mean(errorDifferential)
+            meanDifferentialError = mean(differentialError)
             # check partial training
             partiallyTrained = outputErrorCounter<trainingElementsNumber
             if partiallyTrained: trainedElementsNumber = trainingElementsNumber-outputErrorCounter
@@ -23,15 +23,15 @@ class Trainer():
     # training
     def passForwardBackwardSequence(self,trainingElements):
         # initialize errors
-        errorDifferential = list()
+        differentialError = list()
         # INFO : randomize to be sure we do not train following the same path
         shuffle(trainingElements)
         # run forward & backward for each training input / expected output
         for trainingElement in trainingElements:
             error = self.perceptron.passForwardBackward(trainingElement.input, trainingElement.expectedOutput)
-            errorDifferential.append(error)
+            differentialError.append(error)
         # return
-        return errorDifferential
+        return differentialError
     # TODO : create others check methods (not only match maximum element)
     def checkTraining(self,trainingElements):
         # initialize errors
