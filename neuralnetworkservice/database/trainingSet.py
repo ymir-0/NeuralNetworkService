@@ -2,7 +2,7 @@
 # import
 from neuralnetworkservice.database import database
 from neuralnetworkcommon.trainingSet import TrainingSet
-from neuralnetworkcommon.utils import mergeData
+from neuralnetworkcommon.trainingElement import mergeData
 # training set
 class TrainingSetDB():
     TABLE=database.schema+".TRAINING_SET"

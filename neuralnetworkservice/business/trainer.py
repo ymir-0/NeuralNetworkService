@@ -3,6 +3,7 @@
 from numpy import mean
 from random import shuffle
 from neuralnetworkservice.database.trainingSession import TrainingSessionDB
+from neuralnetworkservice.database.perceptron import PerceptronDB
 # trainer
 class Trainer():
     def trainSubSequence(self,trainingElements):
@@ -14,10 +15,13 @@ class Trainer():
             # train once
             differentialError = self.passForwardBackwardSequence(trainingElements)
             errorElementsNumber = self.checkTraining(trainingElements)
+            # TODO : add parameters to save after time or loop number
             # fill report
             meanDifferentialError = mean(differentialError)
             trainedElementsNumber = trainingElementsNumber - errorElementsNumber
             TrainingSessionDB.updateReport(self.perceptron.id, meanDifferentialError, trainedElementsNumber, errorElementsNumber)
+            # save perceptron
+            PerceptronDB.update(self.perceptron)
             # check partial training
             partiallyTrained = errorElementsNumber<trainingElementsNumber
         return trainedElementsNumber

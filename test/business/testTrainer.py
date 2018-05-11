@@ -9,11 +9,13 @@ from neuralnetworkservice.database.perceptron import PerceptronDB
 from neuralnetworkservice.database.trainingSet import TrainingSetDB
 from neuralnetworkservice.database.trainingSession import TrainingSessionDB
 from neuralnetworkcommon.trainingSession import TrainingSession
+from copy import deepcopy
 # test trainer
 class testTrainer(TestCase):
     def testTrainSubSequence(self):
         # randomize perceptron and training set
         perceptron = commonUtilities.randomPerceptron()
+        initialPerceptron = deepcopy(perceptron)
         PerceptronDB.insert(perceptron)
         inputDimension = len(perceptron.layers[0].weights[0])
         outputDimension = len(perceptron.layers[-1].weights)
@@ -25,7 +27,7 @@ class testTrainer(TestCase):
         trainingSession = TrainingSession.constructFromTrainingSet(perceptron.id,trainingSet,random())
         TrainingSessionDB.insert(trainingSession)
         trainer = Trainer(perceptron)
-        # check training initial session
+        # check initial training session
         fetchedInitialReport = TrainingSessionDB.selectByPerceptronId(perceptron.id)
         self.assertIsNone(fetchedInitialReport.meanDifferantialErrors,"ERROR : initial meanDifferantialError does not match")
         self.assertIsNone(fetchedInitialReport.trainedElementsNumbers,"ERROR : initial trainedElementsNumber does not match")
@@ -40,6 +42,10 @@ class testTrainer(TestCase):
         self.assertEqual(len(fetchedUpdatedReport.meanDifferantialErrors),1,"ERROR : updated meanDifferantialError does not match")
         self.assertEqual(len(fetchedUpdatedReport.trainedElementsNumbers),1,"ERROR : updated trainedElementsNumber does not match")
         self.assertEqual(len(fetchedUpdatedReport.errorElementsNumbers),1,"ERROR : updated errorElementsNumber does not match")
+        # check parceptron update record
+        fetchedUpdatedPerceptron = PerceptronDB.selectById(perceptron.id)
+        self.assertNotEqual(initialPerceptron,fetchedUpdatedPerceptron,"ERROR : perceptron not updated")
+        self.assertEqual(perceptron,fetchedUpdatedPerceptron,"ERROR : updated perceptron does not match")
         # clean database
         TrainingSessionDB.deleteById(perceptron.id)
         PerceptronDB.deleteById(perceptron.id)
