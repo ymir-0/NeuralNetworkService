@@ -108,5 +108,23 @@ class TrainingSessionDB():
             connection.close()
             if raisedException : raise raisedException
         pass
+    @staticmethod
+    def deleteById(id):
+        connection = database.connectDatabase()
+        cursor = connection.cursor()
+        raisedException = None
+        try:
+            statement = "DELETE FROM "+TrainingSessionDB.TABLE+" WHERE PERCEPTRON_ID=%s"
+            parameters = (id,)
+            cursor.execute(statement, parameters)
+            connection.commit()
+        except Exception as exception:
+            connection.rollback()
+            raisedException = exception
+        finally:
+            cursor.close()
+            connection.close()
+            if raisedException : raise raisedException
+        pass
     pass
 pass

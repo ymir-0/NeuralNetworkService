@@ -54,7 +54,10 @@ class testTrainingSessionDB(TestCase):
         fetchedUpdatedComments = TrainingSessionDB.selectByPerceptronId(perceptron.id)
         self.assertEqual(fetchedUpdatedComments.comments,updatedComments,"ERROR : comments does not match")
         # call DB delete
+        TrainingSessionDB.deleteById(perceptron.id)
         # check DB delete
+        deletedTrainingSession = TrainingSessionDB.selectByPerceptronId(perceptron.id)
+        self.assertIsNone(deletedTrainingSession,"ERROR : trainingSet not deleted")
         pass
     pass
 pass
