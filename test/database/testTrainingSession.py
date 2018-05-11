@@ -20,13 +20,13 @@ class testTrainingSessionDB(TestCase):
         trainingSet = commonUtilities.randomTrainingSet()
         TrainingSetDB.insert(trainingSet)
         # initialize random training session
-        comments = "".join([choice(ascii_letters) for _ in range(15)])
-        initialTrainingSession = TrainingSession.constructFromTrainingSet(perceptron.id,trainingSet,random(),comments)
+        initialComments = "".join([choice(ascii_letters) for _ in range(15)])
+        initialTrainingSession = TrainingSession.constructFromTrainingSet(perceptron.id,trainingSet,random(),initialComments)
         # call DB insert
         TrainingSessionDB.insert(initialTrainingSession)
         # call DB select by id
         fetchedInsertedTrainingSession = TrainingSessionDB.selectByPerceptronId(perceptron.id)
-        expectedInsertedTrainingSession = TrainingSession.constructFromAttributes(perceptron.id,trainingSet.id,initialTrainingSession.trainingSet,initialTrainingSession.testSet,"INITIALIZED",None,None,None,None,comments)
+        expectedInsertedTrainingSession = TrainingSession.constructFromAttributes(perceptron.id,trainingSet.id,initialTrainingSession.trainingSet,initialTrainingSession.testSet,"INITIALIZED",None,None,None,None,initialComments)
         # check DB select by id
         self.assertEqual(expectedInsertedTrainingSession,fetchedInsertedTrainingSession,"ERROR : inserted trainingSession does not match")
         # call DB update report
@@ -47,6 +47,12 @@ class testTrainingSessionDB(TestCase):
         fetchedUpdatedStatus = TrainingSessionDB.selectByPerceptronId(perceptron.id)
         self.assertEqual(fetchedUpdatedStatus.status,status,"ERROR : status does not match")
         self.assertEqual(fetchedUpdatedStatus.pid,pid,"ERROR : PID does not match")
+        # call DB update comments
+        updatedComments = "".join([choice(ascii_letters) for _ in range(15)])
+        TrainingSessionDB.updateComments(perceptron.id,updatedComments)
+        # check DB update comments
+        fetchedUpdatedComments = TrainingSessionDB.selectByPerceptronId(perceptron.id)
+        self.assertEqual(fetchedUpdatedComments.comments,updatedComments,"ERROR : comments does not match")
         # call DB delete
         # check DB delete
         pass

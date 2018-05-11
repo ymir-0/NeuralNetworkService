@@ -89,5 +89,24 @@ class TrainingSessionDB():
             connection.close()
             if raisedException : raise raisedException
         pass
+    @staticmethod
+    def updateComments(perceptronId,comments):
+        # update status
+        statement = "UPDATE "+TrainingSessionDB.TABLE+" SET COMMENTS=%s WHERE PERCEPTRON_ID=%s"
+        parameters = (comments,perceptronId,)
+        connection = database.connectDatabase()
+        cursor = connection.cursor()
+        raisedException = None
+        try:
+            cursor.execute(statement, parameters)
+            connection.commit()
+        except Exception as exception :
+            connection.rollback()
+            raisedException = exception
+        finally:
+            cursor.close()
+            connection.close()
+            if raisedException : raise raisedException
+        pass
     pass
 pass
