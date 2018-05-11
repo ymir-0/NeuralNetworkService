@@ -86,5 +86,36 @@ class testTrainingSessionDB(TestCase):
         deletedIds = TrainingSessionDB.selectAllIds()
         self.assertEqual(len(deletedIds),0,"ERROR : complete deletion failed")
         pass
+    # test error
+    def testTrainingSessionInsertError(self):
+        try:
+            TrainingSetDB.insert("")
+            raise Exception("ERROR : Exception not raised")
+        except Exception as exception: self.assertIsNotNone(exception,"ERROR : Exception not raised")
+    def testTrainingSessionSelectByIdError(self):
+        try:
+            TrainingSetDB.selectById("")
+            raise Exception("ERROR : Exception not raised")
+        except Exception as exception: self.assertIsNotNone(exception,"ERROR : Exception not raised")
+    def testTrainingSessionUpdateReportError(self):
+        try:
+            TrainingSetDB.updateReport("",None,None,None)
+            raise Exception("ERROR : Exception not raised")
+        except Exception as exception: self.assertIsNotNone(exception,"ERROR : Exception not raised")
+    def testTrainingSessionUpdateStatusError(self):
+        try:
+            TrainingSetDB.updateStatus("",None,None)
+            raise Exception("ERROR : Exception not raised")
+        except Exception as exception: self.assertIsNotNone(exception,"ERROR : Exception not raised")
+    def testTrainingSessionUpdateCommentsError(self):
+        try:
+            TrainingSetDB.updateComments("",None)
+            raise Exception("ERROR : Exception not raised")
+        except Exception as exception: self.assertIsNotNone(exception,"ERROR : Exception not raised")
+    def testTrainingSessionDeleteByIdError(self):
+        try:
+            TrainingSetDB.deleteById("")
+            raise Exception("ERROR : Exception not raised")
+        except Exception as exception: self.assertIsNotNone(exception,"ERROR : Exception not raised")
     pass
 pass
