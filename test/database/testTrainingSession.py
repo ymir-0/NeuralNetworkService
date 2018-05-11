@@ -25,7 +25,7 @@ class testTrainingSessionDB(TestCase):
         # call DB insert
         TrainingSessionDB.insert(initialTrainingSession)
         # call DB select by id
-        fetchedInsertedTrainingSession = TrainingSessionDB.selectByPerceptronId(initialTrainingSession.perceptronId)
+        fetchedInsertedTrainingSession = TrainingSessionDB.selectByPerceptronId(perceptron.id)
         expectedInsertedTrainingSession = TrainingSession.constructFromAttributes(perceptron.id,trainingSet.id,initialTrainingSession.trainingSet,initialTrainingSession.testSet,"INITIALIZED",None,None,None,None,comments)
         # check DB select by id
         self.assertEqual(expectedInsertedTrainingSession,fetchedInsertedTrainingSession,"ERROR : inserted trainingSession does not match")
@@ -35,10 +35,18 @@ class testTrainingSessionDB(TestCase):
         errorElementsNumber = randint(1,10)
         TrainingSessionDB.updateReport(perceptron.id, meanDifferantialError, trainedElementsNumber, errorElementsNumber)
         # check DB update report
-        fetchedUpdatedReport = TrainingSessionDB.selectByPerceptronId(initialTrainingSession.perceptronId)
+        fetchedUpdatedReport = TrainingSessionDB.selectByPerceptronId(perceptron.id)
         self.assertListEqual(fetchedUpdatedReport.meanDifferantialErrors,[meanDifferantialError],"ERROR : meanDifferantialError does not match")
         self.assertListEqual(fetchedUpdatedReport.trainedElementsNumbers,[trainedElementsNumber],"ERROR : trainedElementsNumber does not match")
         self.assertListEqual(fetchedUpdatedReport.errorElementsNumbers,[errorElementsNumber],"ERROR : errorElementsNumber does not match")
+        # call DB update status
+        status = "".join([choice(ascii_letters) for _ in range(11)])
+        pid = randint(1,1e3)
+        TrainingSessionDB.updateStatus(perceptron.id,status,pid)
+        # check DB update status
+        fetchedUpdatedStatus = TrainingSessionDB.selectByPerceptronId(perceptron.id)
+        self.assertEqual(fetchedUpdatedStatus.status,status,"ERROR : status does not match")
+        self.assertEqual(fetchedUpdatedStatus.pid,pid,"ERROR : PID does not match")
         # call DB delete
         # check DB delete
         pass

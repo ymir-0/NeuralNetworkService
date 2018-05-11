@@ -53,10 +53,28 @@ class TrainingSessionDB():
         return trainingSession
     @staticmethod
     def updateReport(perceptronId,meanDifferantialError,trainedElementsNumber,errorElementsNumber):
-        # TODO : manage training session impact when updating inputs / 'expected outputs'
-        # insert trainingSet
+        # update report
         statement = "UPDATE "+TrainingSessionDB.TABLE+" SET MEAN_DIFFERENTIAL_ERRORS=MEAN_DIFFERENTIAL_ERRORS||%s,TRAINED_ELEMENTS_NUMBERS=TRAINED_ELEMENTS_NUMBERS||%s,ERROR_ELEMENTS_NUMBERS=ERROR_ELEMENTS_NUMBERS||%s WHERE PERCEPTRON_ID=%s"
-        parameters = (meanDifferantialError,trainedElementsNumber,errorElementsNumber, perceptronId,)
+        parameters = (meanDifferantialError,trainedElementsNumber,errorElementsNumber,perceptronId,)
+        connection = database.connectDatabase()
+        cursor = connection.cursor()
+        raisedException = None
+        try:
+            cursor.execute(statement, parameters)
+            connection.commit()
+        except Exception as exception :
+            connection.rollback()
+            raisedException = exception
+        finally:
+            cursor.close()
+            connection.close()
+            if raisedException : raise raisedException
+        pass
+    @staticmethod
+    def updateStatus(perceptronId,status,pid):
+        # update status
+        statement = "UPDATE "+TrainingSessionDB.TABLE+" SET STATUS=%s,PID=%s WHERE PERCEPTRON_ID=%s"
+        parameters = (status,pid,perceptronId,)
         connection = database.connectDatabase()
         cursor = connection.cursor()
         raisedException = None
