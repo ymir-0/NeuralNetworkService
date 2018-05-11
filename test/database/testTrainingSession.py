@@ -30,13 +30,13 @@ class testTrainingSessionDB(TestCase):
         # check DB select by id
         self.assertEqual(expectedInsertedTrainingSession,fetchedInsertedTrainingSession,"ERROR : inserted trainingSession does not match")
         # call DB update report
-        meanDifferantialError = (random()-.5)*10
+        meanDifferentialError = (random()-.5)*10
         trainedElementsNumber = randint(1,10)
         errorElementsNumber = randint(1,10)
         TrainingSessionDB.updateReport(perceptron.id, meanDifferentialError, trainedElementsNumber, errorElementsNumber)
         # check DB update report
         fetchedUpdatedReport = TrainingSessionDB.selectByPerceptronId(perceptron.id)
-        self.assertListEqual(fetchedUpdatedReport.meanDifferantialErrors,[meanDifferantialError],"ERROR : meanDifferantialError does not match")
+        self.assertListEqual(fetchedUpdatedReport.meanDifferantialErrors,[meanDifferentialError],"ERROR : meanDifferantialError does not match")
         self.assertListEqual(fetchedUpdatedReport.trainedElementsNumbers,[trainedElementsNumber],"ERROR : trainedElementsNumber does not match")
         self.assertListEqual(fetchedUpdatedReport.errorElementsNumbers,[errorElementsNumber],"ERROR : errorElementsNumber does not match")
         # call DB update status

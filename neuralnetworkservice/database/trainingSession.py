@@ -1,7 +1,7 @@
 # coding=utf-8
 # import
 from neuralnetworkservice.database import database
-from neuralnetworkcommon.utils import mergeData
+from neuralnetworkcommon.trainingElement import mergeData
 from neuralnetworkcommon.trainingSession import TrainingSession
 # training session
 class TrainingSessionDB():
