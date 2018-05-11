@@ -4,13 +4,13 @@
 from unittest import TestCase
 from test import commonUtilities
 from random import random, randint
-from neuralnetworkservice.business.training import Trainer
+from neuralnetworkservice.business.trainer import Trainer
 from neuralnetworkservice.database.perceptron import PerceptronDB
 from neuralnetworkservice.database.trainingSet import TrainingSetDB
 from neuralnetworkservice.database.trainingSession import TrainingSessionDB
 from neuralnetworkcommon.trainingSession import TrainingSession
 # test trainer
-class testPerceptronDB(TestCase):
+class testTrainer(TestCase):
     def testTrainSubSequence(self):
         # randomize perceptron and training set
         perceptron = commonUtilities.randomPerceptron()
