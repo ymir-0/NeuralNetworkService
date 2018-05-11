@@ -33,7 +33,7 @@ class testTrainingSessionDB(TestCase):
         meanDifferantialError = (random()-.5)*10
         trainedElementsNumber = randint(1,10)
         errorElementsNumber = randint(1,10)
-        TrainingSessionDB.updateReport(perceptron.id, meanDifferantialError, trainedElementsNumber, errorElementsNumber)
+        TrainingSessionDB.updateReport(perceptron.id, meanDifferentialError, trainedElementsNumber, errorElementsNumber)
         # check DB update report
         fetchedUpdatedReport = TrainingSessionDB.selectByPerceptronId(perceptron.id)
         self.assertListEqual(fetchedUpdatedReport.meanDifferantialErrors,[meanDifferantialError],"ERROR : meanDifferantialError does not match")

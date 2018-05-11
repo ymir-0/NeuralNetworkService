@@ -52,10 +52,10 @@ class TrainingSessionDB():
             connection.close()
         return trainingSession
     @staticmethod
-    def updateReport(perceptronId,meanDifferantialError,trainedElementsNumber,errorElementsNumber):
+    def updateReport(perceptronId,meanDifferentialError,trainedElementsNumber,errorElementsNumber):
         # update report
         statement = "UPDATE "+TrainingSessionDB.TABLE+" SET MEAN_DIFFERENTIAL_ERRORS=MEAN_DIFFERENTIAL_ERRORS||%s,TRAINED_ELEMENTS_NUMBERS=TRAINED_ELEMENTS_NUMBERS||%s,ERROR_ELEMENTS_NUMBERS=ERROR_ELEMENTS_NUMBERS||%s WHERE PERCEPTRON_ID=%s"
-        parameters = (meanDifferantialError,trainedElementsNumber,errorElementsNumber,perceptronId,)
+        parameters = (meanDifferentialError,trainedElementsNumber,errorElementsNumber,perceptronId,)
         connection = database.connectDatabase()
         cursor = connection.cursor()
         raisedException = None
