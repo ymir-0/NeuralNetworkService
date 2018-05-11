@@ -2,6 +2,7 @@
 # import
 from numpy import mean
 from random import shuffle
+from neuralnetworkservice.database.trainingSession import TrainingSessionDB
 # trainer
 class Trainer():
     def trainSubSequence(self,trainingElements):
@@ -16,6 +17,7 @@ class Trainer():
             # fill report
             meanDifferentialError = mean(differentialError)
             trainedElementsNumber = trainingElementsNumber - errorElementsNumber
+            TrainingSessionDB.updateReport(self.perceptron.id, meanDifferentialError, trainedElementsNumber, errorElementsNumber)
             # check partial training
             partiallyTrained = errorElementsNumber<trainingElementsNumber
         return trainedElementsNumber
