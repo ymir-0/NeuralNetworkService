@@ -3,7 +3,7 @@
 # import
 from unittest import TestCase
 from test import commonUtilities
-from random import random
+from random import random, randint
 from string import ascii_letters
 from random import choice
 from neuralnetworkservice.database.perceptron import PerceptronDB
@@ -29,7 +29,18 @@ class testTrainingSessionDB(TestCase):
         expectedInsertedTrainingSession = TrainingSession.constructFromAttributes(perceptron.id,trainingSet.id,initialTrainingSession.trainingSet,initialTrainingSession.testSet,"INITIALIZED",None,None,None,None,comments)
         # check DB select by id
         self.assertEqual(expectedInsertedTrainingSession,fetchedInsertedTrainingSession,"ERROR : inserted trainingSession does not match")
-        # call DB update
+        # call DB update report
+        meanDifferantialError = (random()-.5)*10
+        trainedElementsNumber = randint(1,10)
+        errorElementsNumber = randint(1,10)
+        TrainingSessionDB.updateReport(perceptron.id, meanDifferantialError, trainedElementsNumber, errorElementsNumber)
+        # check DB update report
+        fetchedUpdatedReport = TrainingSessionDB.selectByPerceptronId(initialTrainingSession.perceptronId)
+        self.assertListEqual(fetchedUpdatedReport.meanDifferantialErrors,[meanDifferantialError],"ERROR : meanDifferantialError does not match")
+        self.assertListEqual(fetchedUpdatedReport.trainedElementsNumbers,[trainedElementsNumber],"ERROR : trainedElementsNumber does not match")
+        self.assertListEqual(fetchedUpdatedReport.errorElementsNumbers,[errorElementsNumber],"ERROR : errorElementsNumber does not match")
+        # call DB delete
+        # check DB delete
         pass
     pass
 pass
