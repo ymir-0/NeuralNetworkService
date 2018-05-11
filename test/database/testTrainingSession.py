@@ -59,5 +59,32 @@ class testTrainingSessionDB(TestCase):
         deletedTrainingSession = TrainingSessionDB.selectByPerceptronId(perceptron.id)
         self.assertIsNone(deletedTrainingSession,"ERROR : trainingSet not deleted")
         pass
+    # test select/delete all OK
+    def testSelectDeleteAll(self):
+        # initialize random training sessions
+        initialIds=set()
+        trainingSessionNumber = randint(5, 10)
+        for _ in range(trainingSessionNumber):
+            # initialize random perceptron & training set
+            perceptron = commonUtilities.randomPerceptron()
+            PerceptronDB.insert(perceptron)
+            trainingSet = commonUtilities.randomTrainingSet()
+            TrainingSetDB.insert(trainingSet)
+            # initialize random training session
+            initialComments = "".join([choice(ascii_letters) for _ in range(15)])
+            trainingSession = TrainingSession.constructFromTrainingSet(perceptron.id, trainingSet, random(), initialComments)
+            TrainingSessionDB.insert(trainingSession)
+            initialIds.add(perceptron.id)
+            pass
+        # select IDs
+        fetchedIds = TrainingSessionDB.selectAllIds()
+        # check IDs
+        self.assertTrue(initialIds.issubset(fetchedIds),"ERROR : IDs selection does not match")
+        # delete all
+        TrainingSessionDB.deleteAll()
+        # check IDs
+        deletedIds = TrainingSessionDB.selectAllIds()
+        self.assertEqual(len(deletedIds),0,"ERROR : complete deletion failed")
+        pass
     pass
 pass

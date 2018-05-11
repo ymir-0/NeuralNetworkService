@@ -126,5 +126,34 @@ class TrainingSessionDB():
             connection.close()
             if raisedException : raise raisedException
         pass
+    @staticmethod
+    def selectAllIds():
+        statement = "SELECT PERCEPTRON_ID FROM "+TrainingSessionDB.TABLE+" ORDER BY PERCEPTRON_ID ASC"
+        connection = database.connectDatabase()
+        cursor = connection.cursor()
+        try:
+            cursor.execute(statement)
+            attributs = cursor.fetchall()
+        finally:
+            cursor.close()
+            connection.close()
+        ids = [ _[0] for _ in attributs]
+        return ids
+    @staticmethod
+    def deleteAll():
+        connection = database.connectDatabase()
+        cursor = connection.cursor()
+        raisedException = None
+        try:
+            statement = "DELETE FROM "+TrainingSessionDB.TABLE
+            cursor.execute(statement)
+            connection.commit()
+        except Exception as exception:
+            connection.rollback()
+            raisedException = exception
+        finally:
+            cursor.close()
+            connection.close()
+            if raisedException : raise raisedException
     pass
 pass
