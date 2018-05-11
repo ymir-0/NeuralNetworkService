@@ -26,7 +26,7 @@ class testTrainingSessionDB(TestCase):
         TrainingSessionDB.insert(initialTrainingSession)
         # call DB select by id
         fetchedInsertedTrainingSession = TrainingSessionDB.selectByPerceptronId(initialTrainingSession.perceptronId)
-        expectedInsertedTrainingSession = None
+        expectedInsertedTrainingSession = TrainingSession.constructFromAttributes(perceptron.id,trainingSet.id,initialTrainingSession.trainingSet,initialTrainingSession.testSet,"INITIALIZED",None,None,None,None,comments)
         # check DB select by id
         self.assertEqual(expectedInsertedTrainingSession,fetchedInsertedTrainingSession,"ERROR : inserted trainingSession does not match")
         # call DB update
