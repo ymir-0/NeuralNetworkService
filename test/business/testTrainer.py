@@ -24,7 +24,7 @@ class testTrainer(TestCase):
         # initialize training session & trainer
         trainingSession = TrainingSession.constructFromTrainingSet(perceptron.id,trainingSet,random())
         TrainingSessionDB.insert(trainingSession)
-        trainer = Trainer(perceptron,commonUtilities.randomTrainingSet(),0)
+        trainer = Trainer(perceptron)
         # check training initial session
         fetchedInitialReport = TrainingSessionDB.selectByPerceptronId(perceptron.id)
         self.assertIsNone(fetchedInitialReport.meanDifferantialErrors,"ERROR : initial meanDifferantialError does not match")
@@ -70,7 +70,7 @@ class testTrainer(TestCase):
             trainingElement.expectedOutput = actualOutput
             pass
         # run training checking
-        trainer = Trainer(perceptron,commonUtilities.randomTrainingSet(),0)
+        trainer = Trainer(perceptron)
         actualErrorNumber = trainer.checkTraining(trainingElements)
         # check training checking
         self.assertEqual(actualErrorNumber, expectedErrorNumber, "ERROR : error counter does not match")
@@ -83,26 +83,10 @@ class testTrainer(TestCase):
         trainingSize = randint(15, 95)
         trainingSubSet = commonUtilities.randomTrainingSet(inputDimension, outputDimension, trainingSize)
         # test pass forward/backward
-        trainer = Trainer(perceptron,commonUtilities.randomTrainingSet(),0)
+        trainer = Trainer(perceptron)
         errors = trainer.passForwardBackwardSequence(trainingSubSet.trainingElements)
         # check pass forward/backward
         self.assertEqual(len(errors),trainingSize, "ERROR : pass forward/back for subsequence does not match")
-        pass
-    # test constructors
-    def testDefaultConstructor(self):
-        # randomize perceptron and training set
-        perceptron = commonUtilities.randomPerceptron()
-        trainingSet = commonUtilities.randomTrainingSet()
-        expectedDataSet = set(trainingSet.trainingElements)
-        # generate trainer
-        trainer = Trainer(perceptron,trainingSet,random())
-        # check trainer
-        actualTrainingSet = set(trainer.trainingSet)
-        actualTestSet = set(trainer.testSet)
-        commonData = actualTrainingSet.intersection(actualTestSet)
-        actualDataSet = actualTrainingSet.union(actualTestSet)
-        self.assertSetEqual(commonData, set(), "ERROR : test & training data collides")
-        self.assertSetEqual(actualDataSet,expectedDataSet, "ERROR : merged test & training data does not fill data set")
         pass
     pass
 pass
