@@ -6,6 +6,24 @@ from neuralnetworkservice.database.trainingSession import TrainingSessionDB
 from neuralnetworkservice.database.perceptron import PerceptronDB
 # trainer
 class Trainer():
+    def trainCompleteSequence(self,trainingElements, trainingChunkSize):
+        # INFO : randomize to be sure we do not train following the same path
+        shuffle(trainingElements)
+        # train step by step over complete sequence
+        completeSequenceSize=len(trainingElements)
+        subSequenceSize=trainingChunkSize if trainingChunkSize<=completeSequenceSize else completeSequenceSize
+        while subSequenceSize<=completeSequenceSize:
+            # train current sub sequence
+            # INFO : current sub sequence contains previous elements to avoid lossing previous training
+            trainedElementsNumber = self.trainSubSequence(trainingElements[:subSequenceSize])
+            # increase sub sequence (if needed)
+            if subSequenceSize != completeSequenceSize:
+                subSequenceSize += trainedElementsNumber
+                if subSequenceSize > completeSequenceSize : subSequenceSize = completeSequenceSize
+            # otherwise, stop training
+            else: break
+        pass
+    pass
     def trainSubSequence(self,trainingElements):
         # initialize training context
         partiallyTrained = False

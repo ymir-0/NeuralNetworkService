@@ -4,14 +4,49 @@
 from unittest import TestCase
 from test import commonUtilities
 from random import random, randint
+from numpy import mean
+from neuralnetworkcommon.perceptron import Perceptron
+from neuralnetworkcommon.trainingElement import TrainingElement
+from neuralnetworkcommon.trainingSet import TrainingSet
+from neuralnetworkcommon.trainingSession import TrainingSession
 from neuralnetworkservice.business.trainer import Trainer
 from neuralnetworkservice.database.perceptron import PerceptronDB
 from neuralnetworkservice.database.trainingSet import TrainingSetDB
 from neuralnetworkservice.database.trainingSession import TrainingSessionDB
-from neuralnetworkcommon.trainingSession import TrainingSession
 from copy import deepcopy
 # test trainer
 class testTrainer(TestCase):
+    def testTrainCompleteSequence(self):
+        '''INFO : in order to have a simple training, the network will
+         - take 10 random numbers (beetween 0 and 1)
+         - activate 1st neuron if mean < 0.5 (otherwise the second and last neuron will be activated
+         - there will be one hidden layer with 6 neurons
+         - be tested with 97 exemples (prime numbers, to be test last training sequence), chuncked by 5'''
+        # randomize perceptron and training set/session
+        inputVectorDimension = 10
+        perceptron = Perceptron.constructRandomFromDimensions((inputVectorDimension,6,2,))
+        PerceptronDB.insert(perceptron)
+        trainingElements = list()
+        for _ in range(1021):
+            input = [random() for _ in range(inputVectorDimension)]
+            expectedOutput = [1,0] if mean(input) < .5 else [0,1]
+            trainingElement = TrainingElement.constructFromAttributes(input,expectedOutput)
+            trainingElements.append(trainingElement)
+            pass
+        trainingSet = TrainingSet.constructFromAttributes(None,trainingElements)
+        TrainingSetDB.insert(trainingSet)
+        trainingChunkSize = 5
+        trainingSession = TrainingSession.constructFromTrainingSet(perceptron.id,trainingSet,trainingChunkSize,0)
+        TrainingSessionDB.insert(trainingSession)
+        # train perceptron completely
+        trainer = Trainer(perceptron)
+        trainer.trainCompleteSequence(trainingElements,trainingChunkSize)
+        # check complete training
+        # clean database
+        TrainingSessionDB.deleteById(perceptron.id)
+        PerceptronDB.deleteById(perceptron.id)
+        TrainingSetDB.deleteById(trainingSet.id)
+        pass
     def testTrainSubSequence(self):
         # randomize perceptron and training set
         perceptron = commonUtilities.randomPerceptron()
