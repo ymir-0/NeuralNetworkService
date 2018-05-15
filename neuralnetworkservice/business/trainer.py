@@ -12,16 +12,20 @@ class Trainer():
         # train step by step over complete sequence
         completeSequenceSize=len(trainingElements)
         subSequenceSize=trainingChunkSize if trainingChunkSize<=completeSequenceSize else completeSequenceSize
+        lastTrainedElementsNumber = 0
         while subSequenceSize<=completeSequenceSize:
             # train current sub sequence
             # INFO : current sub sequence contains previous elements to avoid lossing previous training
-            trainedElementsNumber = self.trainSubSequence(trainingElements[:subSequenceSize])
+            currentTrainedElementsNumber = self.trainSubSequence(trainingElements[:subSequenceSize])
             # increase sub sequence (if needed)
-            if subSequenceSize != completeSequenceSize:
-                subSequenceSize += trainedElementsNumber
-                if subSequenceSize > completeSequenceSize : subSequenceSize = completeSequenceSize
-            # otherwise, stop training
-            else: break
+            if currentTrainedElementsNumber > lastTrainedElementsNumber:
+                if subSequenceSize != completeSequenceSize:
+                    subSequenceSize += currentTrainedElementsNumber-lastTrainedElementsNumber
+                    lastTrainedElementsNumber = currentTrainedElementsNumber
+                    if subSequenceSize > completeSequenceSize : subSequenceSize = completeSequenceSize
+                # otherwise, stop training
+                else: break
+            pass
         pass
     pass
     def trainSubSequence(self,trainingElements):

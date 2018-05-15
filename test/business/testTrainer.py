@@ -4,7 +4,7 @@
 from unittest import TestCase
 from test import commonUtilities
 from random import random, randint
-from numpy import mean
+from numpy import mean, std
 from neuralnetworkcommon.perceptron import Perceptron
 from neuralnetworkcommon.trainingElement import TrainingElement
 from neuralnetworkcommon.trainingSet import TrainingSet
@@ -24,12 +24,12 @@ class testTrainer(TestCase):
          - be tested with 97 exemples (prime numbers, to be test last training sequence), chuncked by 5'''
         # randomize perceptron and training set/session
         inputVectorDimension = 10
-        perceptron = Perceptron.constructRandomFromDimensions((inputVectorDimension,6,2,))
+        perceptron = Perceptron.constructRandomFromDimensions((inputVectorDimension,2,))
         PerceptronDB.insert(perceptron)
         trainingElements = list()
-        for _ in range(1021):
+        for _ in range(97):
             input = [random() for _ in range(inputVectorDimension)]
-            expectedOutput = [1,0] if mean(input) < .5 else [0,1]
+            expectedOutput = [mean(input),std(input)]
             trainingElement = TrainingElement.constructFromAttributes(input,expectedOutput)
             trainingElements.append(trainingElement)
             pass
