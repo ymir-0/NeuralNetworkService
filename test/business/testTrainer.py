@@ -3,11 +3,7 @@
 # import
 from unittest import TestCase
 from test import commonUtilities
-from random import random, randint
-from numpy import mean, std
-from neuralnetworkcommon.perceptron import Perceptron
-from neuralnetworkcommon.trainingElement import TrainingElement
-from neuralnetworkcommon.trainingSet import TrainingSet
+from random import random, randint, shuffle
 from neuralnetworkcommon.trainingSession import TrainingSession
 from neuralnetworkservice.business.trainer import Trainer
 from neuralnetworkservice.database.perceptron import PerceptronDB
@@ -16,36 +12,39 @@ from neuralnetworkservice.database.trainingSession import TrainingSessionDB
 from copy import deepcopy
 # test trainer
 class testTrainer(TestCase):
-    def testTrainCompleteSequence(self):
-        '''INFO : in order to have a simple training, the network will
-         - take 10 random numbers (beetween 0 and 1)
-         - activate 1st neuron if mean < 0.5 (otherwise the second and last neuron will be activated
-         - there will be one hidden layer with 6 neurons
-         - be tested with 97 exemples (prime numbers, to be test last training sequence), chuncked by 5'''
-        # randomize perceptron and training set/session
-        inputVectorDimension = 10
-        perceptron = Perceptron.constructRandomFromDimensions((inputVectorDimension,2,))
-        PerceptronDB.insert(perceptron)
+    '''
+    INFO : create a usable and simple sequence to train a neural network
+     - input : there is a 10*10 grid on wich we put horizontal and vertical legs
+       a leg is a length 4 vector
+     - output : is the leg horizontal or vertical ?
+       we use a length 2 vector :
+        - horizontal : (1,0)
+        - vertical : (0,1)
+    '''
+    def createCompleteDummyTrainingElements(self):
+        # inialize elements list
         trainingElements = list()
-        for _ in range(97):
-            input = [random() for _ in range(inputVectorDimension)]
-            expectedOutput = [mean(input),std(input)]
-            trainingElement = TrainingElement.constructFromAttributes(input,expectedOutput)
-            trainingElements.append(trainingElement)
+        # run over all grid
+        gridBorder = 10
+        for length in range(1,gridBorder+1):
+            for startPoint in range(gridBorder-1):
+                for fixedPoint in range(gridBorder):
+                    # set the 4 legs touching this point
+                    endPoint = startPoint+length
+                    trainingElement_h0 = ()
+                    trainingElement_h1 = ()
+                    trainingElement_v0 = ()
+                    trainingElement_v1 = ()
+                    trainingElements = trainingElements + [trainingElement_h0,trainingElement_h1,trainingElement_v0,trainingElement_v1]
+                    pass
+                pass
             pass
-        trainingSet = TrainingSet.constructFromAttributes(None,trainingElements)
-        TrainingSetDB.insert(trainingSet)
-        trainingChunkSize = 5
-        trainingSession = TrainingSession.constructFromTrainingSet(perceptron.id,trainingSet,trainingChunkSize,0)
-        TrainingSessionDB.insert(trainingSession)
-        # train perceptron completely
-        trainer = Trainer(perceptron)
-        trainer.trainCompleteSequence(trainingElements,trainingChunkSize)
-        # check complete training
-        # clean database
-        TrainingSessionDB.deleteById(perceptron.id)
-        PerceptronDB.deleteById(perceptron.id)
-        TrainingSetDB.deleteById(trainingSet.id)
+        # remove duplicates
+        trainingElements = list(set(trainingElements))
+        # shuffle and return training elements
+        shuffle(trainingElements)
+        return trainingElements
+    def testTrainCompleteSequence(self):
         pass
     def testTrainSubSequence(self):
         # randomize perceptron and training set
